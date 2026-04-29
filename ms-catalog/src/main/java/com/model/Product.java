@@ -42,7 +42,7 @@ public class Product {
     private BigDecimal originalPrice; 
 
     @Column(name = "is_on_sale", nullable = false)
-    private boolean isOnSale = false; 
+    private boolean isOnSale = false; //Sale = Oferta
 
     @NotBlank(message = "La URL de la imagen es obligatoria")
     @Column(name = "image_url", nullable = false)
