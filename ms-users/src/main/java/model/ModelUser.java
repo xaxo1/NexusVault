@@ -1,4 +1,4 @@
-package com.nexusvault.msusers.model;
+package model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,9 +18,7 @@ public class ModelUser {
     //
     //Usamos Integer aqui y no int porque int nunca puede ser nulo y si este no se le asigna un valor, automaticamente deja en c0, en cambio el Integer no, este si puede ser null
     //
-    //
-    //
-    //
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
