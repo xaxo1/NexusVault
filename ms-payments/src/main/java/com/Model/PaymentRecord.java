@@ -1,8 +1,9 @@
 package com.nexusvault.mspayments.model;
 
+import com.nexusvault.mspayments.enums.PaymentMethod;
+import com.nexusvault.mspayments.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payment_records") // La tabla en MySQL
+@Table(name = "payment_records")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,33 +25,34 @@ public class PaymentRecord {
 
     @NotNull(message = "El ID de la orden es obligatorio")
     @Column(name = "order_id", unique = true, nullable = false)
-    private Long orderId; // Se vincula con el ms-orders
+    private Long orderId;
 
     @NotNull(message = "El monto pagado es obligatorio")
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor a cero")
     @Column(name = "amount_paid", nullable = false)
-    private BigDecimal amountPaid; // Seguimos usando BigDecimal para el dinero
+    private BigDecimal amountPaid;
 
-    @NotBlank(message = "El método de pago es obligatorio")
+    @NotNull(message = "El método de pago es obligatorio")
+    @Enumerated(EnumType.STRING) // Guarda el nombre del enum en la BD
     @Column(name = "payment_method", nullable = false)
-    private String paymentMethod; // Ej: "CREDIT_CARD", "PAYPAL", "WALLET_NXP"
+    private PaymentMethod paymentMethod; 
 
-    @NotBlank(message = "El estado del pago es requerido")
+    @NotNull(message = "El estado del pago es requerido")
+    @Enumerated(EnumType.STRING) // Guarda el nombre del enum en la BD
     @Column(nullable = false)
-    private String status; // Ej: "SUCCESS", "FAILED", "PROCESSING"
+    private PaymentStatus status; 
 
     @Column(name = "external_transaction_id")
-    private String externalTransactionId; // El código de recibo que te da el banco o la pasarela
+    private String externalTransactionId;
 
     @Column(name = "processed_at", updatable = false)
     private LocalDateTime processedAt;
 
-    // PRO-TIP: Registra la fecha exacta en la que se intentó cobrar
     @PrePersist
     protected void onProcess() {
         this.processedAt = LocalDateTime.now();
         if (this.status == null) {
-            this.status = "PROCESSING"; // Si no enviamos estado, empieza procesando
+            this.status = PaymentStatus.PROCESSING; // Usamos el Enum aquí
         }
     }
 }

@@ -1,53 +1,52 @@
 package com.nexusvault.msorders.model;
 
+import com.nexusvault.msorders.enums.OrderStatus; // ¡Recuerda crear este Enum!
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "orders") // El nombre de la tabla en MySQL
+@Table(name = "orders")
 @Data
-@NoArgsConstructor      // Constructor vacío obligatorio para JPA
-@AllArgsConstructor     // Constructor con todos los argumentos
+@NoArgsConstructor
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "El ID del usuario comprador es obligatorio")
-    @Column(name = "user_id", nullable = false)
+    @NotNull(message = "El ID del usuario es obligatorio")
     private Long userId;
 
-    @NotNull(message = "El ID de la skin a comprar es obligatorio")
-    @Column(name = "skin_id", nullable = false)
-    private Long productId;
+    // Relación de uno a muchos: Una orden, muchos productos
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
 
-    @NotNull(message = "El monto total es obligatorio")
-    @DecimalMin(value = "0.01", message = "El monto total debe ser mayor a cero")
-    @Column(name = "total_amount", nullable = false)
+    @NotNull
     private BigDecimal totalAmount;
 
-    @NotBlank(message = "El estado de la orden no puede estar vacío")
-    @Column(nullable = false)
-    private String status; // Ej: "PENDING", "COMPLETED", "FAILED"
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; 
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // PRO-TIP: Este método se ejecuta automáticamente justo ANTES de guardar en la BD
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now(); // Guarda la fecha y hora exacta
+        this.createdAt = LocalDateTime.now();
         if (this.status == null) {
-            this.status = "PENDING"; // Si no le mandamos estado, por defecto será PENDIENTE
+            this.status = OrderStatus.PENDING;
         }
+    }
+    
+    // Método de ayuda para agregar items y que se vinculen automáticamente
+    public void addOrderItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
     }
 }
