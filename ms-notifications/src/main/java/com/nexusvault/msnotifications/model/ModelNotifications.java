@@ -1,4 +1,4 @@
-package model;
+package com.nexusvault.msnotifications.model;
 
 import jakarta.persistence.*;
 import lombok.*;

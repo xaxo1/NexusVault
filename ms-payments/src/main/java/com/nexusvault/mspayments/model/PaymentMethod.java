@@ -1,4 +1,4 @@
-package com.nexusvault.mspayments.enums;
+package com.nexusvault.mspayments.model;
 
 public enum PaymentMethod {
     CREDIT_CARD,

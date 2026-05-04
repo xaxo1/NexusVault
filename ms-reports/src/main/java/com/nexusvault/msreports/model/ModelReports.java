@@ -1,4 +1,4 @@
-package model;
+package com.nexusvault.msreports.model;
 
 import jakarta.persistence.*;
 import lombok.*;

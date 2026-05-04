@@ -1,4 +1,4 @@
-package model;
+package com.nexusvault.mswallet.model;
 
 import jakarta.persistence.*;
 import lombok.*;

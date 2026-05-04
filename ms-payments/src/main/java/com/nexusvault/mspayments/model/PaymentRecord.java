@@ -1,7 +1,5 @@
 package com.nexusvault.mspayments.model;
 
-import com.nexusvault.mspayments.enums.PaymentMethod;
-import com.nexusvault.mspayments.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
