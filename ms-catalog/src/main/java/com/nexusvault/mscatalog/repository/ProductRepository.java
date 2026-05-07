@@ -1,6 +1,6 @@
 package com.nexusvault.mscatalog.repository;
 
-import com.nexusvault.mscatalog.enums.Rarity;
+import com.nexusvault.mscatalog.model.Rarity;
 import com.nexusvault.mscatalog.model.ModelProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
