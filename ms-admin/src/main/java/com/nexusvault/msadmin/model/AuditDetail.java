@@ -3,17 +3,18 @@ package com.nexusvault.msadmin.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "audit_details")
 @Data
 @NoArgsConstructor
 public class AuditDetail {
-    @Id
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // ID único para cada detalle técnico
 
-    @ManyToOne
+    @JsonIgnore // Para evitar ciclos infinitos al serializar
+    @ManyToOne // Muchos detalles pertenecen a un log
     @JoinColumn(name = "audit_log_id")
     private AuditLog auditLog;
 

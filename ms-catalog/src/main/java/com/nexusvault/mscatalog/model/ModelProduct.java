@@ -29,9 +29,10 @@ public class ModelProduct {
     @Column(length = 500, nullable = false)
     private String description;
 
-    @NotBlank(message = "La rareza o categoría es obligatoria")
+    @NotNull(message = "La rareza es obligatoria")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String rarity; 
+    private Rarity rarity;
 
     @NotNull(message = "El precio es obligatorio")
     @DecimalMin(value = "0.0", inclusive = true, message = "El precio no puede ser negativo")

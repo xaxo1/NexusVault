@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "order_items")
@@ -27,7 +28,8 @@ public class OrderItem {
     @NotNull
     private BigDecimal priceAtPurchase; // El precio en ese momento (por si cambia mañana)
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order; // A qué boleta pertenece
+    private Order order; // A que boleta pertenece
 }

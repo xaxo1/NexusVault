@@ -1,6 +1,6 @@
 package com.nexusvault.msorders.model;
 
-import com.nexusvault.msorders.enums.OrderStatus; // ¡Recuerda crear este Enum!
+import com.nexusvault.msorders.enums.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
