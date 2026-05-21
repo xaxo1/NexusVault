@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ModelUser {
+public class UserModel {
 
 
     //
@@ -39,6 +39,9 @@ public class ModelUser {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    @Column(name = "avatar_url") // Opcional, si queremos un nombre específico en la base d datis
+    private String avatarUrl;
 
     @PrePersist
     protected void onCreate() {

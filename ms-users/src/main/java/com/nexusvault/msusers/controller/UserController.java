@@ -1,6 +1,6 @@
 package com.nexusvault.msusers.controller;
 
-import com.nexusvault.msusers.model.ModelUser;
+import com.nexusvault.msusers.model.UserModel;
 import com.nexusvault.msusers.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/profiles")
-    public List<ModelUser> getAllProfiles() {
+    public List<UserModel> getAllProfiles() {
         return userRepository.findAll();
     }
 }

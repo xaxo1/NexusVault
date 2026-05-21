@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ModelAuth {
+public class AuthModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
