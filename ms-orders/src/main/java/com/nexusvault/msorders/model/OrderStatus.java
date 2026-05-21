@@ -1,4 +1,4 @@
-package com.nexusvault.msorders.enums;
+package com.nexusvault.msorders.model;
 
 public enum OrderStatus {
     PENDING,

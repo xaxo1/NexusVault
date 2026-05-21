@@ -1,31 +1,54 @@
 package com.nexusvault.msadmin.controller;
 
 import com.nexusvault.msadmin.model.Admin;
-import com.nexusvault.msadmin.model.AuditLog;
-import com.nexusvault.msadmin.repository.AdminRepository;
-import com.nexusvault.msadmin.repository.AuditLogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nexusvault.msadmin.service.AdminService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; 
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admins")
+@RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private AdminRepository adminRepository; 
+    private final AdminService adminService;
 
-    @Autowired
-    private AuditLogRepository auditLogRepository;
-
-    @GetMapping("/users")
-    public List<Admin> getAllAdmins() { 
-        return adminRepository.findAll(); 
+    // POST: /api/v1/admins
+    @PostMapping
+    public ResponseEntity<Admin> createAdmin(@Valid @RequestBody Admin admin) {
+        // Usamos @Valid para que Spring ejecute las reglas @NotBlank y @Email de tu modelo
+        Admin newAdmin = adminService.createAdmin(admin);
+        return new ResponseEntity<>(newAdmin, HttpStatus.CREATED); // Devuelve 201 Created
     }
 
-    @GetMapping("/logs")
-    public List<AuditLog> getAuditLogs() {
-        return auditLogRepository.findAll(); // Esto trae los logs con sus detalles
+    // GET: /api/v1/admins/active
+    @GetMapping("/active")
+    public ResponseEntity<List<Admin>> getActiveAdmins() {
+        List<Admin> admins = adminService.getActiveAdmins();
+        return ResponseEntity.ok(admins); // Devuelve 200 OK
+    }
+
+    // GET: /api/v1/admins/email/{email}
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Admin> getAdminByEmail(@PathVariable String email) {
+        return adminService.getAdminByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // Devuelve 404 si no existe
+    }
+
+    // PATCH: /api/v1/admins/{id}/deactivate
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Admin> deactivateAdmin(@PathVariable Long id) {
+        // Usamos PATCH porque solo estamos modificando un estado parcial (active = false)
+        try {
+            Admin deactivatedAdmin = adminService.deactivateAdmin(id);
+            return ResponseEntity.ok(deactivatedAdmin);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

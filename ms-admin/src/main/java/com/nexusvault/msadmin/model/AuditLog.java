@@ -1,13 +1,17 @@
 package com.nexusvault.msadmin.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "audit_logs")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +23,11 @@ public class AuditLog {
     private String action; 
     
     @Column(name = "target_entity")
-    private String targetEntity; // Ej: "PRODUCT", "USER"
+    private String targetEntity;
 
     @Column(updatable = false)
     private LocalDateTime timestamp;
 
-    // Relación 1 a N: Un log tiene muchos detalles técnicos
     @OneToMany(mappedBy = "auditLog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuditDetail> details;
 

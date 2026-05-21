@@ -1,29 +1,39 @@
 package com.nexusvault.msinventory.controller;
 
+import com.nexusvault.msinventory.dto.StockAdjustmentDTO;
 import com.nexusvault.msinventory.model.Inventory;
-import com.nexusvault.msinventory.repository.InventoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nexusvault.msinventory.service.InventoryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
+@RequiredArgsConstructor
 public class InventoryController {
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
+    private final InventoryService inventoryService;
 
-    // Endpoint para ver todo el inventario
-    @GetMapping
-    public List<Inventory> getAllInventory() {
-        return inventoryRepository.findAll();
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<Inventory> getStock(@PathVariable Long productId) {
+        return ResponseEntity.ok(inventoryService.getStockByProductId(productId));
     }
 
-    // Endpoint para buscar el stock de un producto en específico
-    @GetMapping("/product/{productId}")
-    public Inventory getInventoryByProductId(@PathVariable Long productId) {
-        return inventoryRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("Inventario no encontrado para el producto: " + productId));
+    @PostMapping("/add")
+    public ResponseEntity<Inventory> addStock(@Valid @RequestBody StockAdjustmentDTO adjustmentDTO) {
+        return ResponseEntity.ok(inventoryService.addStock(adjustmentDTO));
+    }
+
+    @PostMapping("/reduce")
+    public ResponseEntity<Inventory> reduceStock(@Valid @RequestBody StockAdjustmentDTO adjustmentDTO) {
+        return ResponseEntity.ok(inventoryService.reduceStock(adjustmentDTO));
+    }
+
+    @GetMapping("/out-of-stock")
+    public ResponseEntity<List<Inventory>> getOutOfStock() {
+        return ResponseEntity.ok(inventoryService.getOutOfStockProducts());
     }
 }
