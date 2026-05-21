@@ -1,6 +1,6 @@
 package com.nexusvault.msorders.repository;
 
-import com.nexusvault.msorders.enums.OrderStatus;
+import com.nexusvault.msorders.model.OrderStatus;
 import com.nexusvault.msorders.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

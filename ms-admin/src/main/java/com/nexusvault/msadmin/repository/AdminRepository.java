@@ -4,12 +4,15 @@ import com.nexusvault.msadmin.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
-    
-    // Método extra para buscar a un admin por su email (muy útil para el login después)
+
+    // VITAL: Para el login o para evitar correos duplicados
     Optional<Admin> findByEmail(String email);
-    
+
+    // Para obtener solo a los admins que no han sido baneados o desactivados
+    List<Admin> findByActiveTrue();
 }

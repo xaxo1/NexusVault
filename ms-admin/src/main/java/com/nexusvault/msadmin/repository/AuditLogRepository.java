@@ -9,7 +9,9 @@ import java.util.List;
 @Repository
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
-    // Método extra para ver todo el historial de acciones de un administrador específico
+    // ¿Qué hizo el Admin X?
     List<AuditLog> findByAdminId(Long adminId);
-    
+
+    // ¿Qué ha pasado con la entidad "PRODUCT" o "USER"?
+    List<AuditLog> findByTargetEntity(String targetEntity);
 }
