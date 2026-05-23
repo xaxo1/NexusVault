@@ -1,23 +1,24 @@
 package com.nexusvault.msauth.service;
 
+import com.nexusvault.msauth.dto.AuthRequestDTO;
+import com.nexusvault.msauth.dto.AuthResponseDTO;
 import com.nexusvault.msauth.model.AuthModel;
 import com.nexusvault.msauth.repository.AuthRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
-    @Autowired
-    private AuthRepository authRepository;
-
-    /**
-     * MÉTODOS BÁSICOS (CRUD)
-     */
+    private final AuthRepository authRepository;
 
     public AuthModel saveUser(AuthModel user) {
+        log.info("Registrando nuevo usuario en el sistema de autenticación: {}", user.getEmail());
         return authRepository.save(user);
     }
 
@@ -25,28 +26,31 @@ public class AuthService {
         return authRepository.findById(id);
     }
 
-    /**
-     * LÓGICA DE NEGOCIO: LOGIN BÁSICO
-     * Este método es la semilla de lo que después se convertirá en tu JWT.
-     */
-    public boolean authenticateUser(String email, String rawPassword) {
-        Optional<AuthModel> userOpt = authRepository.findByEmail(email);
+    public Optional<AuthResponseDTO> authenticateUser(AuthRequestDTO request) {
+        Optional<AuthModel> userOpt = authRepository.findByEmail(request.getEmail());
 
         if (userOpt.isPresent()) {
             AuthModel user = userOpt.get();
 
-            // 1. Verificamos que el usuario no esté baneado o desactivado
+            // 1. Validar estado de la cuenta
             if (!user.getIsActive()) {
-                return false;
+                log.warn("Intento de login rechazado: La cuenta {} está inactiva.", request.getEmail());
+                return Optional.empty();
             }
 
-            // 2. Comparamos contraseñas (OJO: Por ahora es texto plano.
-            // En producción aquí se usaría BCrypt.matches() de Spring Security)
-            if (user.getPassword().equals(rawPassword)) {
-                return true; // ¡Login exitoso!
+            // 2. Validación de contraseña en texto plano (Simulación base)
+            if (user.getPassword().equals(request.getPassword())) {
+                log.info("Autenticación exitosa para el usuario: {}", request.getEmail());
+                
+                // SIMULACIÓN DE GENERACIÓN DE JWT: Armamos un token representativo estructurado
+                String generatedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + 
+                                       java.util.Base64.getEncoder().encodeToString(user.getEmail().getBytes()) + 
+                                       ".NEXUS_SECRET_KEY";
+
+                return Optional.of(new AuthResponseDTO(generatedJwt, user.getEmail(), user.getRole()));
             }
         }
 
-        return false; // Email no existe o contraseña incorrecta
+        return Optional.empty();
     }
 }

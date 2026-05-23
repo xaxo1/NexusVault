@@ -1,8 +1,9 @@
 package com.nexusvault.msusers.controller;
 
 import com.nexusvault.msusers.model.UserModel;
-import com.nexusvault.msusers.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nexusvault.msusers.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,13 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/profiles")
-    public List<UserModel> getAllProfiles() {
-        return userRepository.findAll();
+    public ResponseEntity<List<UserModel>> getAllProfiles() {
+        return ResponseEntity.ok(userService.obtenerTodosLosPerfiles());
     }
 }

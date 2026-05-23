@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ModelNotifications {
 
     @Id
@@ -47,8 +46,9 @@ public class ModelNotifications {
      * Usamos un Enum en formato String para saber si ya se envió.
      * Valores posibles: "PENDING", "SENT", "FAILED"
      */
+    @Enumerated(EnumType.STRING) // Esta anotación guarda el texto del Enum ("PENDING") en la BD
     @Column(nullable = false, length = 20)
-    private String status;
+    private NotificationStatus status; // Cambiado a NotificationStatus para amarrarlo al Enum seguro
 
     /*
      * Trazabilidad de cuándo se creó el aviso y cuándo finalmente salió del servidor.
@@ -68,8 +68,7 @@ public class ModelNotifications {
 
         // ¡La regla de negocio clave! Toda notificación nace pendiente de envío.
         if (this.status == null) {
-            this.status = "PENDING";
+            this.status = NotificationStatus.PENDING; // Usa el Enum en lugar del String plano
         }
     }
-
 }

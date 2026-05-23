@@ -1,29 +1,43 @@
 package com.nexusvault.msnotifications.controller;
 
+import com.nexusvault.msnotifications.dto.NotificationRequestDTO;
 import com.nexusvault.msnotifications.model.ModelNotifications;
-import com.nexusvault.msnotifications.repository.NotificationsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.nexusvault.msnotifications.model.NotificationStatus;
+import com.nexusvault.msnotifications.service.NotificationService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/notifications")
-
+@RequiredArgsConstructor
 public class NotificationsController {
 
-    @Autowired
-    private NotificationsRepository notificationsRepository;
+    private final NotificationService notificationService;
+
+    // Endpoint clave para que otros microservicios gatillen notificaciones
+    @PostMapping("/send")
+    public ResponseEntity<ModelNotifications> requestNotification(@Valid @RequestBody NotificationRequestDTO requestDTO) {
+        ModelNotifications created = notificationService.createNotification(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @GetMapping("/logs")
-    public List<ModelNotifications> getAllLogs() {
-        return notificationsRepository.findAll();
+    public ResponseEntity<List<ModelNotifications>> getAllLogs() {
+        return ResponseEntity.ok(notificationService.getAllNotifications());
     }
 
     @GetMapping("/pending")
-    public List<ModelNotifications> getPending() {
-        return notificationsRepository.findByStatus("PENDING");
+    public ResponseEntity<List<ModelNotifications>> getPending() {
+        return ResponseEntity.ok(notificationService.getNotificationsByStatus(NotificationStatus.PENDING));
     }
 
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<ModelNotifications> confirmDelivery(@PathVariable Long id) {
+        return ResponseEntity.ok(notificationService.markAsSent(id));
+    }
 }

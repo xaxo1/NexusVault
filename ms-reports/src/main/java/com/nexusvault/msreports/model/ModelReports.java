@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ModelReports {
 
     @Id
@@ -31,8 +30,9 @@ public class ModelReports {
      * Define de qué trata el documento. Ejemplos: "VENTAS_MENSUALES", "SKINS_MAS_VENDIDAS".
      * 'updatable = false' porque el tipo de un reporte histórico nunca debe cambiar.
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_reporte", nullable = false, length = 50, updatable = false)
-    private String tipoReporte;
+    private ReportType tipoReporte;
 
     /*
      * [PARÁMETROS DE BÚSQUEDA - SEGÚN DIAGRAMA UML]
@@ -83,5 +83,4 @@ public class ModelReports {
             this.totalIngresosCalculado = BigDecimal.ZERO;
         }
     }
-
 }

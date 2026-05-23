@@ -1,6 +1,7 @@
 package com.nexusvault.msnotifications.repository;
 
 import com.nexusvault.msnotifications.model.ModelNotifications;
+import com.nexusvault.msnotifications.model.NotificationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +11,5 @@ import java.util.List;
 public interface NotificationsRepository extends JpaRepository<ModelNotifications, Long> {
 
     // Método útil para buscar notificaciones que aún no se envían
-    List<ModelNotifications> findByStatus(String status);
+    List<ModelNotifications> findByStatus(NotificationStatus status);
 }

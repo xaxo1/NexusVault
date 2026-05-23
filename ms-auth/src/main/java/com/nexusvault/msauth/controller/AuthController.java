@@ -1,27 +1,27 @@
 package com.nexusvault.msauth.controller;
 
+import com.nexusvault.msauth.dto.AuthRequestDTO;
+import com.nexusvault.msauth.dto.AuthResponseDTO;
 import com.nexusvault.msauth.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    // Endpoint simulado de Login
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
-
-        boolean isAuthenticated = authService.authenticateUser(email, password);
-
-        if (isAuthenticated) {
-            return ResponseEntity.ok("¡Bienvenido a Nexus Vault!");
-        } else {
-            return ResponseEntity.status(401).body("Credenciales incorrectas o cuenta inactiva");
-        }
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDTO authRequest) {
+        return authService.authenticateUser(authRequest)
+                .map(response -> ResponseEntity.ok().body(response))
+                .orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new AuthResponseDTO(null, authRequest.getEmail(), "Credenciales inválidas o cuenta inactiva")));
     }
 }

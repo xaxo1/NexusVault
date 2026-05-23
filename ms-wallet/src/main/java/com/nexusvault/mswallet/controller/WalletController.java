@@ -1,20 +1,21 @@
 package com.nexusvault.mswallet.controller;
 
+import com.nexusvault.mswallet.dto.TransactionRequestDTO;
 import com.nexusvault.mswallet.model.ModelWallet;
 import com.nexusvault.mswallet.service.WalletService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/wallet")
+@RequiredArgsConstructor
 public class WalletController {
 
-    @Autowired
-    private WalletService walletService;
+    private final WalletService walletService;
 
     /**
      * CONSULTAR SALDO
@@ -36,8 +37,8 @@ public class WalletController {
      * Simula la carga de fondos (por ejemplo, después de un pago exitoso).
      */
     @PostMapping("/deposit")
-    public ResponseEntity<String> deposit(@RequestParam Long userId, @RequestParam BigDecimal amount) {
-        boolean success = walletService.addFunds(userId, amount);
+    public ResponseEntity<String> deposit(@Valid @RequestBody TransactionRequestDTO transactionRequest) {
+        boolean success = walletService.addFunds(transactionRequest.getUserId(), transactionRequest.getAmount());
 
         if (success) {
             return ResponseEntity.ok("Depósito realizado con éxito. Nuevo saldo actualizado.");
@@ -51,8 +52,8 @@ public class WalletController {
      * Este endpoint será el que golpee el ms-orders para validar la transacción.
      */
     @PostMapping("/pay")
-    public ResponseEntity<String> processPayment(@RequestParam Long userId, @RequestParam BigDecimal amount) {
-        boolean success = walletService.deductFunds(userId, amount);
+    public ResponseEntity<String> processPayment(@Valid @RequestBody TransactionRequestDTO transactionRequest) {
+        boolean success = walletService.deductFunds(transactionRequest.getUserId(), transactionRequest.getAmount());
 
         if (success) {
             return ResponseEntity.ok("Pago procesado correctamente. ¡Skin comprada!");
