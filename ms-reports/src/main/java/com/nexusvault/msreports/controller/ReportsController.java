@@ -5,10 +5,8 @@ import com.nexusvault.msreports.model.ReportType;
 import com.nexusvault.msreports.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -27,5 +25,13 @@ public class ReportsController {
     @GetMapping("/search")
     public ResponseEntity<List<ModelReports>> getByType(@RequestParam ReportType type) {
         return ResponseEntity.ok(reportService.obtenerReportesPorTipo(type));
+    }
+
+    // 👈 NUEVO ENDPOINT PARA DISPARAR LA ORQUESTACIÓN ASÍNCRONA
+    @PostMapping("/generate")
+    public Mono<ResponseEntity<ModelReports>> generateReport(@RequestParam Long userId) {
+        return reportService.generarYGuardarReporteFinancieroAsync(userId)
+                .map(reporteGuardado -> ResponseEntity.ok(reporteGuardado))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 }
