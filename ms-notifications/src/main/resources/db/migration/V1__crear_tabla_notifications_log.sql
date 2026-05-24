@@ -4,7 +4,7 @@ CREATE TABLE notifications_log (
                                    target_email VARCHAR(100) NOT NULL,
                                    title VARCHAR(150) NOT NULL,
                                    message VARCHAR(1000) NOT NULL,
-                                   status VARCHAR(20) NOT NULL,
+                                   status ENUM('PENDING','SENT','FAILED') NOT NULL,
                                    created_at DATETIME NOT NULL,
                                    sent_at DATETIME
 );

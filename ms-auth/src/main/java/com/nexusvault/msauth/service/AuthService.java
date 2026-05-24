@@ -42,10 +42,16 @@ public class AuthService {
             if (user.getPassword().equals(request.getPassword())) {
                 log.info("Autenticación exitosa para el usuario: {}", request.getEmail());
                 
-                // SIMULACIÓN DE GENERACIÓN DE JWT: Armamos un token representativo estructurado
-                String generatedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + 
-                                       java.util.Base64.getEncoder().encodeToString(user.getEmail().getBytes()) + 
-                                       ".NEXUS_SECRET_KEY";
+                io.jsonwebtoken.security.Keys.hmacShaKeyFor("NEXUS_SECRET_KEY_SUPER_SECRETA_Y_LARGA_1234567890".getBytes());
+                java.security.Key key = io.jsonwebtoken.security.Keys.hmacShaKeyFor("NEXUS_SECRET_KEY_SUPER_SECRETA_Y_LARGA_1234567890".getBytes());
+                
+                String generatedJwt = io.jsonwebtoken.Jwts.builder()
+                        .setSubject(user.getEmail())
+                        .claim("role", user.getRole())
+                        .setIssuedAt(new java.util.Date())
+                        .setExpiration(new java.util.Date(System.currentTimeMillis() + 86400000)) // 24 hours
+                        .signWith(key, io.jsonwebtoken.SignatureAlgorithm.HS256)
+                        .compact();
 
                 return Optional.of(new AuthResponseDTO(generatedJwt, user.getEmail(), user.getRole()));
             }

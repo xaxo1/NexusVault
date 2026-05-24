@@ -21,4 +21,15 @@ public class UserController {
     public ResponseEntity<List<UserModel>> getAllProfiles() {
         return ResponseEntity.ok(userService.obtenerTodosLosPerfiles());
     }
+
+    @GetMapping("/profiles/auth/{id}")
+    public ResponseEntity<UserModel> getProfileById(@org.springframework.web.bind.annotation.PathVariable Long id) {
+        // Implementación básica para obtener el perfil o NotFound.
+        // asumiendo que obtenerTodosLosPerfiles devuelve todo, filtramos. (Lo ideal sería un método en userService)
+        return userService.obtenerTodosLosPerfiles().stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

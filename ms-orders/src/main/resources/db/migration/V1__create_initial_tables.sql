@@ -3,7 +3,7 @@ CREATE TABLE orders (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     total_amount DECIMAL(19, 2) NOT NULL,
-    status ENUM('pending', 'paid', 'shipped', 'cancelled') NOT NULL,
+    status ENUM('PENDING', 'PAID', 'SHIPPED', 'CANCELLED') NOT NULL,
     created_at DATETIME
 );
 

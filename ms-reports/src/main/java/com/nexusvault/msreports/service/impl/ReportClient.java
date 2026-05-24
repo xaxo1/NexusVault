@@ -24,7 +24,7 @@ public class ReportClient {
      */
     public Mono<UserRemoteDTO> obtenerPerfilUsuarioAsync(Long userId) {
         return webClient.get()
-            .uri("http://localhost:8081/api/users/profiles/auth/{id}", userId)
+            .uri("http://localhost:8076/api/users/profiles/auth/{id}", userId)
             .retrieve()
             .bodyToMono(UserRemoteDTO.class)
             .onErrorResume(error -> {
@@ -38,7 +38,7 @@ public class ReportClient {
      */
     public Mono<List<OrderRemoteDTO>> obtenerOrdenesUsuarioAsync(Long userId) {
         return webClient.get()
-            .uri("http://localhost:8085/api/orders/user/{id}", userId)
+            .uri("http://localhost:8083/api/v1/orders/user/{id}", userId)
             .retrieve()
             .bodyToFlux(OrderRemoteDTO.class)
             .collectList() // Convierte el Flux en un Mono<List> tal como en tu archivo guía
