@@ -1,16 +1,158 @@
 version: '3.8'
 
 services:
-  mysql-db:
+  db-mysql:
     image: mysql:8.0
-    container_name: nexus-mysql
-    restart: always
+    container_name: db-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nexus_admin_db # Solo para crear la primera, Flyway creará el resto
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nexus-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ms-admin:
+    build:
+      context: .
+      dockerfile: ms-admin/Dockerfile
+    container_name: ms-admin
+    ports:
+      - "8085:8085"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-auth:
+    build:
+      context: .
+      dockerfile: ms-auth/Dockerfile
+    container_name: ms-auth
+    ports:
+      - "8079:8079"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-catalog:
+    build:
+      context: .
+      dockerfile: ms-catalog/Dockerfile
+    container_name: ms-catalog
+    ports:
+      - "8081:8081"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-inventory:
+    build:
+      context: .
+      dockerfile: ms-inventory/Dockerfile
+    container_name: ms-inventory
+    ports:
+      - "8082:8082"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-notifications:
+    build:
+      context: .
+      dockerfile: ms-notifications/Dockerfile
+    container_name: ms-notifications
+    ports:
+      - "8078:8078"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-orders:
+    build:
+      context: .
+      dockerfile: ms-orders/Dockerfile
+    container_name: ms-orders
+    ports:
+      - "8083:8083"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-payments:
+    build:
+      context: .
+      dockerfile: ms-payments/Dockerfile
+    container_name: ms-payments
+    ports:
+      - "8084:8084"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-reports:
+    build:
+      context: .
+      dockerfile: ms-reports/Dockerfile
+    container_name: ms-reports
+    ports:
+      - "8077:8077"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-users:
+    build:
+      context: .
+      dockerfile: ms-users/Dockerfile
+    container_name: ms-users
+    ports:
+      - "8076:8076"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+  ms-wallet:
+    build:
+      context: .
+      dockerfile: ms-wallet/Dockerfile
+    container_name: ms-wallet
+    ports:
+      - "8075:8075"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    networks:
+      - nexus-network
+
+networks:
+  nexus-network:
+    driver: bridge
 
 volumes:
-  mysql-data:
+  mysql_data:
