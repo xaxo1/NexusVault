@@ -1,6 +1,8 @@
 package com.nexusvault.msusers.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -24,10 +26,12 @@ public class UserModel {
     private Long id;
 
     // Este campo vincula este perfil con las credenciales en MS-Auth
+    @NotNull(message = "El Auth ID es obligatorio")
     @Column(name = "auth_id", unique = true, nullable = false)
     private Long authId;
 
     // Atributos específicos del diagrama UML que hicimos en ing en software (Clase Jugador)
+    @NotBlank(message = "El nickname no puede estar vacío")
     @Column(unique = true, nullable = false, length = 50)
     private String nickname;
 

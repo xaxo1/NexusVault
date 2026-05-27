@@ -8,12 +8,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j // Agregamos Slf4j para la rúbrica
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class OrderController {
     // POST: /api/v1/orders
     @PostMapping
     public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderCreateRequest request) {
+        log.info("Petición REST recibida: Crear nueva orden para usuario ID: {}", request.getUserId());
         Order newOrder = orderService.createOrder(request.getUserId(), request.getItems());
         return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
     }
