@@ -38,7 +38,7 @@ Para que el sistema se la banque y no se caiga todo junto, lo armamos con micros
 
 ## Los 10 Microservicios
 
-Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puerto:
+Acá están los 10 servicios solicitados, cada uno en su puerto:
 
 | Servicio | Puerto | ¿Qué hace? |
 | :--- | :--- | :--- |
@@ -57,7 +57,7 @@ Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puer
 
 ## Tecnologías que usamos
 
-* Java 17 + Spring Boot 3
+* Java 21 + Spring Boot 3
 * Spring WebFlux (`WebClient` para conectar los microservicios)
 * Spring Data JPA / Hibernate
 * MySQL 8 (corriendo en Docker)
@@ -70,10 +70,10 @@ Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puer
 ## Cómo hacerlo correr en tu PC (Paso a Paso)
 
 ### Requisitos:
-Tener instalado **Java 17**, **Docker / Docker Desktop** y **Git**.
+Tener instalado **Java 21**, **Docker / Docker Desktop** y **Git**.
 
 ### Paso 1: Clonar esto
-```bash
+
 git clone [https://github.com/xaxo1/NexusVault.git](https://github.com/xaxo1/NexusVault.git)
 cd nexusvault
 
@@ -91,4 +91,6 @@ docker compose down
 docker compose up -d --build 
 
 docker compose ps ### Revisar el estado de los contenedores
+
+```bash
 
