@@ -51,4 +51,19 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    // PUT: /api/v1/admins/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @Valid @RequestBody Admin adminDetails) {
+        Admin updatedAdmin = adminService.updateAdmin(id, adminDetails);
+        return ResponseEntity.ok(updatedAdmin);
+    }
+
+    // DELETE: /api/v1/admins/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
+        adminService.deleteAdmin(id);
+        return ResponseEntity.noContent().build(); // Devuelve 204 No Content
+    }
+
 }
