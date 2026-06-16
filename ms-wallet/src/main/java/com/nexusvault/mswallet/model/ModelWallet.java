@@ -1,10 +1,13 @@
 package com.nexusvault.mswallet.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+//-------1-acá comienza con el schema general del modelo
+@Schema(description = "Entidad que representa la billetera digital y balance monetario de precisión de un usuario")
 @Entity
 @Table(name = "wallets")
 @Data
@@ -13,62 +16,40 @@ import java.time.LocalDateTime;
 @Builder
 public class ModelWallet {
 
+    //------2-acá comienza con el id
+    @Schema(description = "ID único e incremental interno de la billetera en la base de datos", example = "7001")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-     * [IMPORTANTE - ARQUITECTURA DE MICROSERVICIOS]
-     * No usamos @OneToOne apuntando a ModelUser porque están en bases de datos distintas.
-     * Guardamos el 'user_id' como un número simple. Cuando MS-Orders necesite cobrar,
-     * buscará la billetera que coincida con este número.
-     * 'unique = true' asegura que un jugador jamás pueda tener dos billeteras en el sistema.
-     */
+    @Schema(description = "ID del usuario propietario del balance (Relación lógica distribuida)", example = "3001")
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
 
-    /*
-     * [CRÍTICO - MANEJO FINANCIERO]
-     * NUNCA usamos 'float' o 'double' para dinero, porque Java comete errores de redondeo
-     * en los decimales (ej: 0.1 + 0.2 = 0.30000000000000004).
-     * Usamos 'BigDecimal' que garantiza precisión absoluta en las transacciones.
-     * 'precision = 10' -> Permite hasta 10 dígitos en total (ej: 99.999.999,00)
-     * 'scale = 2'      -> Obliga a tener exactamente 2 decimales para los centavos.
-     */
+    @Schema(description = "Saldo actual con precisión garantizada de dos decimales para transacciones", example = "450.50")
     @Column(name = "saldo_actual", nullable = false, precision = 10, scale = 2)
     private BigDecimal saldoActual;
 
+    @Schema(description = "Identificador de la cuenta de banco o pasarela vinculada para recargas", example = "ES2114900002341234")
     @Column(name = "cuenta_bancaria_vinculada", length = 100)
     private String cuentaBancariaVinculada;
 
-    /*
-     * [AUDITORÍA]
-     * 'updatable = false' bloquea esta columna a nivel de base de datos.
-     * Si un hacker o un error en el código intenta hacer un UPDATE para cambiar
-     * la fecha de creación de la billetera, MySQL lo rechazará automáticamente.
-     */
+    @Schema(description = "Timestamp inmutable de la habilitación de la billetera", example = "2026-01-10T12:00:00")
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Schema(description = "Timestamp dinámico de la última actualización de saldo o cobro", example = "2026-06-16T18:05:00")
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Schema(description = "Flag de control operativo de la cuenta de cobro", example = "true")
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    /*
-     * [TRIGGER DE BASE DE DATOS - INICIALIZACIÓN]
-     * @PrePersist es un interceptor. Spring Boot pausa milisegundos ANTES de ejecutar
-     * el 'INSERT' en MySQL y ejecuta este bloque.
-     * Esto nos garantiza que los datos por defecto (como saldo en cero) siempre
-     * se asignen, incluso si al Frontend se le olvidó enviarlos.
-     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-
-        // BigDecimal.ZERO es una constante de Java más eficiente que escribir 'new BigDecimal("0")'
         if (this.saldoActual == null) {
             this.saldoActual = BigDecimal.ZERO;
         }
@@ -77,12 +58,6 @@ public class ModelWallet {
         }
     }
 
-    /*
-     * [TRIGGER DE BASE DE DATOS - TRAZABILIDAD]
-     * @PreUpdate actúa ANTES de un 'UPDATE' en MySQL.
-     * Cada vez que sumemos o restemos saldo, este método actualizará la fecha
-     * automáticamente sin que tengamos que hacerlo manual en el Service.
-     */
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();

@@ -38,7 +38,11 @@ Para que el sistema se la banque y no se caiga todo junto, lo armamos con micros
 
 ## Los 10 Microservicios
 
+<<<<<<< HEAD
 Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puerto:
+=======
+Acá están los 10 servicios solicitados, cada uno en su puerto:
+>>>>>>> 87ee1c614bd3ff5a4ad530ab11546266f87f5986
 
 | Servicio | Puerto | ¿Qué hace? |
 | :--- | :--- | :--- |
@@ -57,7 +61,11 @@ Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puer
 
 ## Tecnologías que usamos
 
+<<<<<<< HEAD
 * Java 17 + Spring Boot 3
+=======
+* Java 21 + Spring Boot 3
+>>>>>>> 87ee1c614bd3ff5a4ad530ab11546266f87f5986
 * Spring WebFlux (`WebClient` para conectar los microservicios)
 * Spring Data JPA / Hibernate
 * MySQL 8 (corriendo en Docker)
@@ -70,10 +78,17 @@ Acá están los 10 servicios obligatorios que pide la pauta, cada uno en su puer
 ## Cómo hacerlo correr en tu PC (Paso a Paso)
 
 ### Requisitos:
+<<<<<<< HEAD
 Tener instalado **Java 17**, **Docker / Docker Desktop** y **Git**.
 
 ### Paso 1: Clonar esto
 ```bash
+=======
+Tener instalado **Java 21**, **Docker / Docker Desktop** y **Git**.
+
+### Paso 1: Clonar esto
+
+>>>>>>> 87ee1c614bd3ff5a4ad530ab11546266f87f5986
 git clone [https://github.com/xaxo1/NexusVault.git](https://github.com/xaxo1/NexusVault.git)
 cd nexusvault
 
@@ -92,3 +107,8 @@ docker compose up -d --build
 
 docker compose ps ### Revisar el estado de los contenedores
 
+<<<<<<< HEAD
+=======
+```bash
+
+>>>>>>> 87ee1c614bd3ff5a4ad530ab11546266f87f5986

@@ -1,10 +1,13 @@
 package com.nexusvault.msreports.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+//-------1-acá comienza con el schema general del modelo
+@Schema(description = "Entidad inmutable que representa un registro consolidado de auditoría analítica y financiera")
 @Entity
 @Table(name = "reports_history")
 @Data
@@ -13,69 +16,41 @@ import java.time.LocalDateTime;
 @Builder
 public class ModelReports {
 
+    //------2-acá comienza con el id
+    @Schema(description = "Identificador único y autoincremental del reporte", example = "501")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-     * [TRAZABILIDAD DE USUARIO]
-     * Guarda el ID del Analista o Administrador que solicitó este reporte.
-     * No es 'unique = true' porque un mismo analista puede generar cientos de reportes.
-     */
+    @Schema(description = "ID del administrador o analista que solicitó la compilación de datos", example = "1002")
     @Column(name = "requested_by_user_id", nullable = false)
     private Long requestedByUserId;
 
-    /*
-     * [CLASIFICACIÓN DEL REPORTE]
-     * Define de qué trata el documento. Ejemplos: "VENTAS_MENSUALES", "SKINS_MAS_VENDIDAS".
-     * 'updatable = false' porque el tipo de un reporte histórico nunca debe cambiar.
-     */
+    @Schema(description = "Clasificación temática del informe generado", example = "VENTAS_MENSUALES")
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_reporte", nullable = false, length = 50, updatable = false)
     private ReportType tipoReporte;
 
-    /*
-     * [PARÁMETROS DE BÚSQUEDA - SEGÚN DIAGRAMA UML]
-     * Definen el rango de tiempo que abarcó este reporte.
-     * Esto evita que gerencia se confunda y sepa exactamente de qué periodo son los datos.
-     */
+    @Schema(description = "Fecha inicial del rango cronológico de los datos evaluados", example = "2026-05-01T00:00:00")
     @Column(name = "fecha_inicio_rango", nullable = false, updatable = false)
     private LocalDateTime fechaInicioRango;
 
+    @Schema(description = "Fecha límite del rango cronológico de los datos evaluados", example = "2026-05-31T23:59:59")
     @Column(name = "fecha_fin_rango", nullable = false, updatable = false)
     private LocalDateTime fechaFinRango;
 
-    /*
-     * [CACHÉ DE RENDIMIENTO FINANCIERO]
-     * En lugar de calcular los ingresos cada vez que miramos el historial,
-     * guardamos el resultado final del cálculo aquí (usando BigDecimal por precisión).
-     * Esto ahorra recursos del servidor y cumple con el requisito de 'rendimiento' de tu informe.
-     */
+    @Schema(description = "Suma total acumulada calculada a partir de los registros remotos", example = "1450.75")
     @Column(name = "total_ingresos_calculado", precision = 12, scale = 2, updatable = false)
     private BigDecimal totalIngresosCalculado;
 
-    /*
-     * [UBICACIÓN DEL ARCHIVO]
-     * (Opcional pero muy profesional)
-     * Si el PDF se guarda en un servidor (como AWS S3), aquí guardas la ruta
-     * para que el usuario pueda volver a descargarlo sin tener que generarlo de nuevo.
-     */
+    @Schema(description = "Enlace físico de descarga del documento exportado (ej. AWS S3)", example = "https://nexusvault-s3.amazonaws.com/reports/report-1718549021.pdf")
     @Column(name = "pdf_file_url", length = 500)
     private String pdfFileUrl;
 
-    /*
-     * [AUDITORÍA ESTRICTA]
-     * Fecha exacta en la que el sistema terminó de procesar el PDF.
-     */
+    @Schema(description = "Timestamp exacto del almacenamiento físico del registro", example = "2026-06-16T18:00:00")
     @Column(name = "fecha_generacion", nullable = false, updatable = false)
     private LocalDateTime fechaGeneracion;
 
-    /*
-     * [TRIGGER DE INICIALIZACIÓN]
-     * Registra la fecha de generación de forma automática.
-     * Fíjate que en este modelo NO hay @PreUpdate. Esto es intencional.
-     * En bases de datos de auditoría, los registros son inmutables (solo de lectura/inserción).
-     */
     @PrePersist
     protected void onCreate() {
         this.fechaGeneracion = LocalDateTime.now();

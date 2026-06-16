@@ -1,64 +1,69 @@
 package com.nexusvault.mswallet.controller;
 
 import com.nexusvault.mswallet.dto.TransactionRequestDTO;
-import com.nexusvault.mswallet.model.ModelWallet;
 import com.nexusvault.mswallet.service.WalletService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/wallet")
 @RequiredArgsConstructor
+//1-acá el tag general de la rúbrica
+@Tag(name = "Billeteras", description = "Endpoints para la gestión de balances, abonos de saldo y cobros transaccionales de jugadores")
 public class WalletController {
 
     private final WalletService walletService;
 
-    /**
-     * CONSULTAR SALDO
-     * Útil para mostrarle al jugador cuánto dinero tiene en el Navbar de la web.
-     */
     @GetMapping("/user/{userId}")
+    @Operation(summary = "Consultar estado y saldo actual", description = "Recupera la información completa de la billetera del jugador, útil para el Navbar del cliente web.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Estructura de la billetera localizada con éxito"),
+        @ApiResponse(responseCode = "404", description = "No existe ninguna billetera asociada al usuario especificado", content = @Content)
+    })
     public ResponseEntity<?> getBalance(@PathVariable Long userId) {
-        Optional<ModelWallet> wallet = walletService.getWalletByUserId(userId);
-
-        if (wallet.isPresent()) {
-            return ResponseEntity.ok(wallet.get());
-        } else {
-            return ResponseEntity.status(404).body("No se encontró una billetera para el usuario ID: " + userId);
-        }
+        return walletService.getWalletByUserId(userId)
+                .map(wallet -> ResponseEntity.ok((Object) wallet))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontró una billetera para el usuario ID: " + userId));
     }
 
-    /**
-     * DEPOSITAR DINERO
-     * Simula la carga de fondos (por ejemplo, después de un pago exitoso).
-     */
     @PostMapping("/deposit")
+    @Operation(summary = "Depositar fondos en la cuenta", description = "Simula e incrementa los fondos del balance actual de un jugador tras realizar una recarga monetaria exitosa.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Depósito procesado de manera correcta, balance actualizado"),
+        @ApiResponse(responseCode = "400", description = "Monto inválido, negativo o datos del usuario erróneos", content = @Content)
+    })
     public ResponseEntity<String> deposit(@Valid @RequestBody TransactionRequestDTO transactionRequest) {
         boolean success = walletService.addFunds(transactionRequest.getUserId(), transactionRequest.getAmount());
-
         if (success) {
             return ResponseEntity.ok("Depósito realizado con éxito. Nuevo saldo actualizado.");
         } else {
-            return ResponseEntity.status(400).body("Error al procesar el depósito. Verifique el monto o el ID de usuario.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al procesar el depósito. Verifique el monto o el ID de usuario.");
         }
     }
 
-    /**
-     * COBRAR COMPRA (Deducción)
-     * Este endpoint será el que golpee el ms-orders para validar la transacción.
-     */
     @PostMapping("/pay")
+    @Operation(summary = "Procesar pago por compra de skin", description = "Realiza la deducción del saldo de un jugador para aprobar una transacción distribuida iniciada por ms-orders.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Monto descontado correctamente. ¡Transacción completada!"),
+        @ApiResponse(responseCode = "402", description = "Pago rechazado: El balance del usuario es insuficiente para el cobro", content = @Content)
+    })
     public ResponseEntity<String> processPayment(@Valid @RequestBody TransactionRequestDTO transactionRequest) {
         boolean success = walletService.deductFunds(transactionRequest.getUserId(), transactionRequest.getAmount());
-
         if (success) {
             return ResponseEntity.ok("Pago procesado correctamente. ¡Skin comprada!");
         } else {
-            return ResponseEntity.status(402).body("Pago rechazado: Saldo insuficiente o cuenta no encontrada.");
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
+                    .body("Pago rechazado: Saldo insuficiente o cuenta no encontrada.");
         }
     }
 }

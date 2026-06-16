@@ -53,7 +53,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).map(existingUser -> {
             existingUser.setNickname(userModel.getNickname());
             existingUser.setAvatarUrl(userModel.getAvatarUrl());
-            // No actualizamos la reputación ni el authId ni isActive por seguridad en este endpoint básico
             log.info("Perfil actualizado correctamente: {}", id);
             return userRepository.save(existingUser);
         });
@@ -63,6 +62,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void eliminarPerfil(Long id) {
         log.info("Eliminando perfil con ID: {}", id);
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("No se puede eliminar: No existe ningún perfil con el ID: " + id);
+        }
         userRepository.deleteById(id);
     }
 }

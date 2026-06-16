@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Manejador centralizado de errores para Órdenes.
- * Simplifica los controladores al quitarles la responsabilidad de los try/catch repetitivos.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Maneja errores de validación de campos (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
@@ -25,10 +22,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
     }
 
+    // Maneja errores de lógica de negocio o recursos faltantes
+    @ExceptionHandler({RuntimeException.class, IllegalArgumentException.class})
+    public ResponseEntity<Map<String, String>> handleNotFoundExceptions(RuntimeException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // Maneja errores inesperados del servidor
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Error interno en MS-Orders: " + ex.getMessage());
+        error.put("error", "Error interno en el ecosistema MS-Orders: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

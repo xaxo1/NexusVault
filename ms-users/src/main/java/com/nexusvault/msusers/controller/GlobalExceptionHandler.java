@@ -9,15 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Esta clase centraliza el manejo de errores de todo el microservicio de usuarios.
- * Atrapa los errores para devolver JSON limpios y estructurados.
- * Cumple con el criterio de "Uso de @ControllerAdvice" de la rúbrica.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Maneja los errores cuando falla una validación de @Valid
+    // Maneja los errores cuando falla una validación de @Valid en los JSON de entrada
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
@@ -27,11 +22,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
     }
 
-    // Maneja errores generales (como NullPointerException, etc.)
+    // Maneja casos donde se intenta actualizar o eliminar un perfil inexistente
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleNotFoundExceptions(IllegalArgumentException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // Maneja errores generales del servidor
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Error interno en MS-Users: " + ex.getMessage());
+        error.put("error", "Error interno crítico en MS-Users: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

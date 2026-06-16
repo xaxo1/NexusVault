@@ -1,9 +1,12 @@
 package com.nexusvault.msnotifications.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+//-------1-acá comienza con el schema general del modelo
+@Schema(description = "Entidad que registra la auditoría, trazabilidad y estado de cada notificación emitida")
 @Entity
 @Table(name = "notifications_log")
 @Data
@@ -12,63 +15,46 @@ import java.time.LocalDateTime;
 @Builder
 public class ModelNotifications {
 
+    //------2-acá comienza con el id
+    @Schema(description = "Clave primaria autoincremental de la bitácora de auditoría", example = "501")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-     * [DESTINATARIO]
-     * A quién va dirigida la notificación. Puente con MS-Auth/MS-Users.
-     * No es único, un usuario recibe miles de avisos en su vida.
-     */
+    @Schema(description = "ID del usuario asociado que recibe la alerta", example = "5")
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    /*
-     * [CONTACTO DIRECTO]
-     * Guardamos el correo aquí temporalmente para no tener que estar
-     * preguntándole al MS-Auth a cada rato cuál era el email del usuario 5.
-     */
+    @Schema(description = "Copia del correo del destinatario al momento del registro", example = "usuario5@correo.com")
     @Column(name = "target_email", nullable = false, length = 100)
     private String targetEmail;
 
+    @Schema(description = "Título o asunto resumido del aviso", example = "Alerta de Inicio de Sesión")
     @Column(nullable = false, length = 150)
     private String title;
 
-    /*
-     * 'length = 1000' porque el cuerpo de un correo o mensaje puede ser largo.
-     */
+    @Schema(description = "Cuerpo completo de texto que compone el mensaje enviado", example = "Se ha detectado un inicio de sesión desde una nueva dirección IP.")
     @Column(nullable = false, length = 1000)
     private String message;
 
-    /*
-     * [CONTROL DE ESTADO - LA MEJORA DEL DISEÑO]
-     * Usamos un Enum en formato String para saber si ya se envió.
-     * Valores posibles: "PENDING", "SENT", "FAILED"
-     */
-    @Enumerated(EnumType.STRING) // Esta anotación guarda el texto del Enum ("PENDING") en la BD
+    @Schema(description = "Estado transaccional en el que se encuentra la notificación", example = "PENDING")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private NotificationStatus status; // Cambiado a NotificationStatus para amarrarlo al Enum seguro
+    private NotificationStatus status;
 
-    /*
-     * Trazabilidad de cuándo se creó el aviso y cuándo finalmente salió del servidor.
-     */
+    @Schema(description = "Fecha y hora exacta en la que se grabó la solicitud en el sistema", example = "2026-03-31T18:00:00")
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha y hora en la que los servicios externos confirmaron la salida del mensaje", example = "2026-03-31T18:02:15")
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
 
-    /*
-     * [TRIGGER DE INICIALIZACIÓN]
-     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-
-        // ¡La regla de negocio clave! Toda notificación nace pendiente de envío.
         if (this.status == null) {
-            this.status = NotificationStatus.PENDING; // Usa el Enum en lugar del String plano
+            this.status = NotificationStatus.PENDING;
         }
     }
 }
