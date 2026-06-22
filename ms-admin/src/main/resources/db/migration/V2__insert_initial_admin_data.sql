@@ -1,6 +1,6 @@
 -- Creamos un Administrador
-INSERT INTO admins (name, email, role, active) 
-VALUES ('Nikki Admin', 'admin@nexusvault.com', 'SUPER_ADMIN', true);
+INSERT INTO admins (name, email, role, active, password)
+VALUES ('Nikki Admin', 'admin@nexusvault.com', 'SUPER_ADMIN', true, 'admin123');
 
 -- Registramos un evento en la bitácora: Nikki cambió el precio del Producto ID 1
 INSERT INTO audit_logs (admin_id, action, target_entity, timestamp) 
