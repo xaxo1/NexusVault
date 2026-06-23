@@ -38,6 +38,9 @@ public class AuditLog {
     @Column(updatable = false)
     private LocalDateTime timestamp;
 
+
+    @Schema(description = "Colección de cambios atómicos asociados a este log")
+    @OneToMany(mappedBy = "auditLog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuditDetail> details;
 
     @PrePersist
