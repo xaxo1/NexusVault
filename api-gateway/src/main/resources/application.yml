@@ -1,0 +1,73 @@
+server:
+  port: 8080  # El punto de entrada único para todo tu ecosistema
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # 1. Microservicio de Usuarios(ms-users)
+        - id: ms-users-route
+          uri: http://localhost:8076
+          predicates:
+            - Path=/api/users/**
+
+        # 2. Microservicio de Billetera (ms-wallet)
+        - id: ms-wallet-route
+          uri: http://localhost:8075
+          predicates:
+            - Path=/api/wallet/**
+
+        # 3. Microservicio de Reportes y Analítica (ms-reports)
+        - id: ms-reports-route
+          uri: http://localhost:8077
+          predicates:
+            - Path=/api/reports/**
+
+        # 4. Microservicio de Catalog (ms-catalog)
+        - id: ms-catalog-route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/products/**
+
+        # 5. Microservicio de Pedidos (ms-orders)
+        - id: ms-orders-route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/orders/**
+
+        # 6. Microservicio de Notificaciones (ms-notifications)
+        - id: ms-notifications-route
+          uri: http://localhost:8078
+          predicates:
+            - Path=/api/notifications/**
+
+        # 7. Microservicio de Autenticación / Seguridad (ms-auth)
+        - id: ms-auth-route
+          uri: http://localhost:8079
+          predicates:
+            - Path=/api/auth/**
+
+        # 8. Microservicio de Pagos(ms-payments)
+        - id: ms-payments-route
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/payments/**
+
+        # 👑 Microservicio de Administración y Auditoría (ms-admin) - Puerto 8082
+        - id: ms-admin-admins-route
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/admins/**
+
+        - id: ms-admin-audits-route
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/audits/**
+
+        # 10. Microservicio de Inventario (ms-inventory)
+        - id: ms-inventory-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/inventory/**
