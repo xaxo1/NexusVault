@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuditDetail</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nexusvault.msadmin.model</a>
+</div>
+
+<h1>Coverage Summary for Class: AuditDetail (com.nexusvault.msadmin.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuditDetail</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nexusvault.msadmin.model;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;
+&nbsp;//-------1-acá comienza con el schema general del modelo
+&nbsp;@Schema(description = &quot;Detalle atómico que registra los cambios sufridos en un campo particular&quot;)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;audit_details&quot;)
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;public class AuditDetail {
+&nbsp;
+&nbsp;    //------2-acá comienza con el id
+&nbsp;    @Schema(description = &quot;ID único de la traza de detalle&quot;, example = &quot;98551&quot;)
+&nbsp;    @Id 
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id; 
+&nbsp;
+&nbsp;    @JsonIgnore 
+&nbsp;    @ManyToOne 
+&nbsp;    @JoinColumn(name = &quot;audit_log_id&quot;)
+&nbsp;    private AuditLog auditLog;
+&nbsp;
+&nbsp;    @Schema(description = &quot;Nombre del atributo afectado&quot;, example = &quot;role&quot;)
+&nbsp;    private String fieldName;  
+&nbsp;
+&nbsp;    @Schema(description = &quot;Valor inicial pre-operación&quot;, example = &quot;MODERATOR&quot;)
+&nbsp;    private String oldValue;   
+&nbsp;
+&nbsp;    @Schema(description = &quot;Nuevo valor almacenado&quot;, example = &quot;SUPER_ADMIN&quot;)
+&nbsp;    private String newValue;   
+&nbsp;
+<b class="nc">&nbsp;    public AuditDetail(String fieldName, String oldValue, String newValue, AuditLog auditLog) {</b>
+<b class="nc">&nbsp;        this.fieldName = fieldName;</b>
+<b class="nc">&nbsp;        this.oldValue = oldValue;</b>
+<b class="nc">&nbsp;        this.newValue = newValue;</b>
+<b class="nc">&nbsp;        this.auditLog = auditLog;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-06-25 19:01</div>
+</div>
+</body>
+</html>

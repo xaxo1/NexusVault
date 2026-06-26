@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuditController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nexusvault.msadmin.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: AuditController (com.nexusvault.msadmin.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuditController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AuditController$AuditCreateRequest</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nexusvault.msadmin.controller;
+&nbsp;
+&nbsp;import com.nexusvault.msadmin.model.AuditLog;
+&nbsp;import com.nexusvault.msadmin.service.AuditService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import com.nexusvault.msadmin.model.AuditDetail;
+&nbsp;import lombok.Data;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/v1/audits&quot;)
+&nbsp;@RequiredArgsConstructor
+&nbsp;//1-acá el tag general
+&nbsp;@Tag(name = &quot;Auditoría (Logs)&quot;, description = &quot;Endpoints destinados a la trazabilidad y registro de logs de auditoría técnica en la plataforma&quot;)
+&nbsp;public class AuditController {
+&nbsp;
+&nbsp;    private final AuditService auditService;
+&nbsp;
+&nbsp;    //3-Operation
+&nbsp;    @Operation(summary = &quot;Crear registro de auditoría&quot;, description = &quot;Inserta una nueva traza de auditoría que documenta una acción realizada por un administrador sobre una entidad.&quot;)
+&nbsp;    //4-API Responses
+&nbsp;    @ApiResponses(value = {
+&nbsp;        // 4.1  Response
+&nbsp;        @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Log de auditoría registrado con éxito&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;AuditLog&gt; createAuditLog(@RequestBody AuditCreateRequest request) {
+<b class="nc">&nbsp;        AuditLog newLog = auditService.createAuditRecord(</b>
+<b class="nc">&nbsp;                request.getAdminId(),</b>
+<b class="nc">&nbsp;                request.getAction(),</b>
+<b class="nc">&nbsp;                request.getTargetEntity(),</b>
+<b class="nc">&nbsp;                request.getDetails()</b>
+&nbsp;        );
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(newLog, HttpStatus.CREATED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //5-Operation
+&nbsp;    @Operation(summary = &quot;Obtener logs por Administrador&quot;, description = &quot;Filtra e informa todas las acciones históricas ejecutadas por un administrador específico.&quot;)
+&nbsp;    //6-API Responses
+&nbsp;    @ApiResponses(value = {
+&nbsp;        // 6.1  Response
+&nbsp;        @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Historial obtenido correctamente&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/admin/{adminId}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;AuditLog&gt;&gt; getLogsByAdmin(@PathVariable Long adminId) {
+<b class="nc">&nbsp;        List&lt;AuditLog&gt; logs = auditService.getLogsByAdmin(adminId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(logs);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Obtener logs por Entidad Objetivo&quot;, description = &quot;Permite auditar los cambios sufridos en un módulo específico del sistema (ej: PRODUCT, USER).&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;        @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Lista filtrada por entidad de destino recuperada&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/entity/{targetEntity}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;AuditLog&gt;&gt; getLogsByEntity(@PathVariable String targetEntity) {
+<b class="nc">&nbsp;        List&lt;AuditLog&gt; logs = auditService.getLogsByEntity(targetEntity);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(logs);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Data
+&nbsp;    @Schema(description = &quot;Modelo de petición requerido para inicializar un registro de auditoría&quot;)
+&nbsp;    public static class AuditCreateRequest {
+&nbsp;        @Schema(description = &quot;ID del administrador ejecutor&quot;, example = &quot;10&quot;)
+&nbsp;        private Long adminId;
+&nbsp;        @Schema(description = &quot;Acción técnica realizada&quot;, example = &quot;UPDATE_PRICE&quot;)
+&nbsp;        private String action;
+&nbsp;        @Schema(description = &quot;Entidad afectada&quot;, example = &quot;SKIN_CATALOG&quot;)
+&nbsp;        private String targetEntity;
+&nbsp;        private List&lt;AuditDetail&gt; details;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-06-25 19:01</div>
+</div>
+</body>
+</html>
