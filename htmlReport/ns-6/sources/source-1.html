@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AdminService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nexusvault.msadmin.service</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminService (com.nexusvault.msadmin.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62,5%
+  </span>
+  <span class="absValue">
+    (5/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91,9%
+  </span>
+  <span class="absValue">
+    (34/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nexusvault.msadmin.service;
+&nbsp;
+&nbsp;import com.nexusvault.msadmin.exception.ResourceNotFoundException;
+&nbsp;import com.nexusvault.msadmin.model.Admin;
+&nbsp;import com.nexusvault.msadmin.repository.AdminRepository;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class AdminService {
+&nbsp;
+&nbsp;    private final AdminRepository adminRepository;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public Admin createAdmin(Admin admin) {
+<b class="fc">&nbsp;        log.info(&quot;Iniciando proceso de creación para el admin con email: {}&quot;, admin.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (adminRepository.findByEmail(admin.getEmail()).isPresent()) {</b>
+<b class="fc">&nbsp;            log.warn(&quot;Intento de creación fallido: El email {} ya está registrado&quot;, admin.getEmail());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;El email ya está registrado&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // NOTA: Cuando integres Spring Security, aquí harías: 
+&nbsp;        // admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+&nbsp;
+<b class="fc">&nbsp;        Admin savedAdmin = adminRepository.save(admin);</b>
+<b class="fc">&nbsp;        log.info(&quot;Administrador creado exitosamente con ID: {}&quot;, savedAdmin.getId());</b>
+<b class="fc">&nbsp;        return savedAdmin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Admin&gt; getActiveAdmins() {
+<b class="fc">&nbsp;        log.info(&quot;Consultando la lista de todos los administradores activos&quot;);</b>
+<b class="fc">&nbsp;        return adminRepository.findByActiveTrue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Optional&lt;Admin&gt; getAdminByEmail(String email) {
+<b class="fc">&nbsp;        return adminRepository.findByEmail(email);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public Admin deactivateAdmin(Long id) {
+<b class="fc">&nbsp;        log.info(&quot;Iniciando solicitud de baja lógica para el administrador ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;        Admin admin = adminRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; {</b>
+<b class="fc">&nbsp;                    log.error(&quot;Fallo al desactivar: No se encontró ningún administrador con ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;                    return new ResourceNotFoundException(&quot;Administrador no encontrado con ID: &quot; + id);</b>
+&nbsp;                });
+&nbsp;
+<b class="fc">&nbsp;        admin.setActive(false);</b>
+<b class="fc">&nbsp;        log.info(&quot;Administrador ID: {} desactivado exitosamente (baja lógica)&quot;, id);</b>
+<b class="fc">&nbsp;        return adminRepository.save(admin);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public Admin updateAdmin(Long id, Admin adminDetails) {
+<b class="fc">&nbsp;        log.info(&quot;Actualizando datos del administrador ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;        Admin existingAdmin = adminRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; {</b>
+<b class="nc">&nbsp;                    log.error(&quot;Fallo al actualizar: Administrador no encontrado con ID: {}&quot;, id);</b>
+<b class="nc">&nbsp;                    return new ResourceNotFoundException(&quot;Administrador no encontrado con ID: &quot; + id);</b>
+&nbsp;                });
+&nbsp;
+<b class="fc">&nbsp;        existingAdmin.setName(adminDetails.getName());</b>
+<b class="fc">&nbsp;        existingAdmin.setEmail(adminDetails.getEmail());</b>
+<b class="fc">&nbsp;        existingAdmin.setRole(adminDetails.getRole());</b>
+<b class="fc">&nbsp;        existingAdmin.setActive(adminDetails.isActive());</b>
+&nbsp;        
+<b class="pc">&nbsp;        if (adminDetails.getPassword() != null &amp;&amp; !adminDetails.getPassword().isBlank()) {</b>
+<b class="nc">&nbsp;            existingAdmin.setPassword(adminDetails.getPassword()); // Encriptar aquí a futuro</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return adminRepository.save(existingAdmin);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public void deleteAdmin(Long id) {
+<b class="fc">&nbsp;        log.info(&quot;Ejecutando borrado físico para el administrador ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;        if (!adminRepository.existsById(id)) {</b>
+<b class="fc">&nbsp;            log.error(&quot;Fallo al borrar: Administrador no encontrado con ID: {}&quot;, id);</b>
+<b class="fc">&nbsp;            throw new ResourceNotFoundException(&quot;Administrador no encontrado con ID: &quot; + id);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        adminRepository.deleteById(id);</b>
+<b class="fc">&nbsp;        log.info(&quot;Administrador ID: {} eliminado físicamente de la base de datos&quot;, id);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-06-25 19:01</div>
+</div>
+</body>
+</html>

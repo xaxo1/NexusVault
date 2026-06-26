@@ -1,0 +1,94 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuditLogRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nexusvault.msadmin.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: AuditLogRepository (com.nexusvault.msadmin.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">AuditLogRepository$MockitoMock$d52SqD0J</td>
+  </tr>
+  <tr>
+    <td class="name">AuditLogRepository$MockitoMock$d52SqD0J$auxiliary$032eso5z</td>
+  </tr>
+  <tr>
+    <td class="name">AuditLogRepository$MockitoMock$d52SqD0J$auxiliary$FvUkaF11</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nexusvault.msadmin.repository;
+&nbsp;
+&nbsp;import com.nexusvault.msadmin.model.AuditLog;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface AuditLogRepository extends JpaRepository&lt;AuditLog, Long&gt; {
+&nbsp;
+&nbsp;    // ¿Qué hizo el Admin X?
+&nbsp;    List&lt;AuditLog&gt; findByAdminId(Long adminId);
+&nbsp;
+&nbsp;    // ¿Qué ha pasado con la entidad &quot;PRODUCT&quot; o &quot;USER&quot;?
+&nbsp;    List&lt;AuditLog&gt; findByTargetEntity(String targetEntity);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-06-25 19:01</div>
+</div>
+</body>
+</html>

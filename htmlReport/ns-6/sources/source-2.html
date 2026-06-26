@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuditService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nexusvault.msadmin.service</a>
+</div>
+
+<h1>Coverage Summary for Class: AuditService (com.nexusvault.msadmin.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuditService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nexusvault.msadmin.service;
+&nbsp;
+&nbsp;import com.nexusvault.msadmin.model.AuditDetail;
+&nbsp;import com.nexusvault.msadmin.model.AuditLog;
+&nbsp;import com.nexusvault.msadmin.repository.AuditLogRepository;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class AuditService {
+&nbsp;
+&nbsp;    private final AuditLogRepository auditLogRepository;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public AuditLog createAuditRecord(Long adminId, String action, String targetEntity, List&lt;AuditDetail&gt; details) {
+<b class="fc">&nbsp;        AuditLog auditLog = new AuditLog();</b>
+<b class="fc">&nbsp;        auditLog.setAdminId(adminId);</b>
+<b class="fc">&nbsp;        auditLog.setAction(action);</b>
+<b class="fc">&nbsp;        auditLog.setTargetEntity(targetEntity);</b>
+&nbsp;
+&nbsp;        // Si hay detalles técnicos (cambios de campos), los vinculamos al Log principal
+<b class="pc">&nbsp;        if (details != null &amp;&amp; !details.isEmpty()) {</b>
+<b class="fc">&nbsp;            details.forEach(detail -&gt; detail.setAuditLog(auditLog));</b>
+<b class="fc">&nbsp;            auditLog.setDetails(details);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Al guardar el auditLog, gracias a CascadeType.ALL, se guardarán los AuditDetail automáticamente
+<b class="fc">&nbsp;        return auditLogRepository.save(auditLog);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;AuditLog&gt; getLogsByAdmin(Long adminId) {
+<b class="fc">&nbsp;        return auditLogRepository.findByAdminId(adminId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;AuditLog&gt; getLogsByEntity(String targetEntity) {
+<b class="fc">&nbsp;        return auditLogRepository.findByTargetEntity(targetEntity);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-06-25 19:01</div>
+</div>
+</body>
+</html>
