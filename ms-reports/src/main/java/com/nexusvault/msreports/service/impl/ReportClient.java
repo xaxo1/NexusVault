@@ -9,6 +9,9 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Cliente reactivo que gestiona la comunicación con otros microservicios (como ms-users y ms-orders) utilizando {@link WebClient}.
+ */
 @Component
 public class ReportClient {
 
@@ -20,7 +23,11 @@ public class ReportClient {
     }
 
     /**
-     * Consulta de forma asíncrona el perfil del usuario en ms-users
+     * Consulta de forma asíncrona el perfil del usuario en el microservicio ms-users.
+     * En caso de error, implementa resiliencia devolviendo un {@link Mono#empty()}.
+     *
+     * @param userId El identificador único del usuario.
+     * @return Un objeto {@link Mono} con los datos remotos del usuario en un {@link UserRemoteDTO}.
      */
     public Mono<UserRemoteDTO> obtenerPerfilUsuarioAsync(Long userId) {
         return webClient.get()
@@ -34,7 +41,11 @@ public class ReportClient {
     }
 
     /**
-     * Consulta el historial de órdenes en ms-orders y lo consolida en una Lista
+     * Consulta de forma asíncrona el historial de órdenes en el microservicio ms-orders para consolidarlas en una lista.
+     * En caso de error, retorna una lista vacía para no interrumpir el flujo.
+     *
+     * @param userId El identificador único del usuario para buscar sus órdenes.
+     * @return Un objeto {@link Mono} que emite una lista de {@link OrderRemoteDTO}.
      */
     public Mono<List<OrderRemoteDTO>> obtenerOrdenesUsuarioAsync(Long userId) {
         return webClient.get()

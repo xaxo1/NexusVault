@@ -6,6 +6,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad principal que representa un registro en la bitácora de notificaciones.
+ * Mantiene la información del destinatario, contenido, y el estado del ciclo de vida del mensaje.
+ */
 @Schema(description = "Entidad que registra la auditoría, trazabilidad y estado de cada notificación emitida")
 @Entity
 @Table(name = "notifications_log")
@@ -50,6 +54,10 @@ public class ModelNotifications {
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
 
+    /**
+     * Método invocado de forma automática antes de crear y guardar el registro.
+     * Define la fecha de creación y establece el estado por defecto a PENDING si no ha sido configurado.
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

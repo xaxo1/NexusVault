@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.util.List;
 
+/**
+ * Objeto de transferencia de datos empleado para solicitar la creación de una nueva orden.
+ * Agrupa el identificador del usuario y los artículos que desea adquirir.
+ */
 @Schema(description = "Estructura de entrada para gatillar la creación de una orden desde el carro de compras")
 @Data
 public class OrderCreateRequestDTO {

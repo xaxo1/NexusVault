@@ -16,6 +16,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+/**
+ * Controlador REST encargado de gestionar los registros de auditoría.
+ * Permite registrar y consultar acciones realizadas por los administradores.
+ */
 @RestController
 @RequestMapping("/api/v1/audits")
 @RequiredArgsConstructor
@@ -32,6 +36,12 @@ public class AuditController {
         // 4.1  Response
         @ApiResponse(responseCode = "201", description = "Log de auditoría registrado con éxito")
     })
+    /**
+     * Registra un nuevo evento de auditoría en el sistema.
+     *
+     * @param request los datos necesarios para crear el registro de auditoría.
+     * @return una respuesta con el log de auditoría creado y el estado HTTP 201 (CREATED).
+     */
     @PostMapping
     public ResponseEntity<AuditLog> createAuditLog(@RequestBody AuditCreateRequest request) {
         AuditLog newLog = auditService.createAuditRecord(
@@ -50,6 +60,12 @@ public class AuditController {
         // 6.1  Response
         @ApiResponse(responseCode = "200", description = "Historial obtenido correctamente")
     })
+    /**
+     * Obtiene todos los registros de auditoría asociados a un administrador específico.
+     *
+     * @param adminId el identificador del administrador.
+     * @return una lista de logs de auditoría correspondientes al administrador.
+     */
     @GetMapping("/admin/{adminId}")
     public ResponseEntity<List<AuditLog>> getLogsByAdmin(@PathVariable Long adminId) {
         List<AuditLog> logs = auditService.getLogsByAdmin(adminId);
@@ -60,12 +76,21 @@ public class AuditController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista filtrada por entidad de destino recuperada")
     })
+    /**
+     * Obtiene todos los registros de auditoría asociados a una entidad objetivo.
+     *
+     * @param targetEntity el nombre de la entidad objetivo (ej. PRODUCT, USER).
+     * @return una lista de logs de auditoría correspondientes a la entidad.
+     */
     @GetMapping("/entity/{targetEntity}")
     public ResponseEntity<List<AuditLog>> getLogsByEntity(@PathVariable String targetEntity) {
         List<AuditLog> logs = auditService.getLogsByEntity(targetEntity);
         return ResponseEntity.ok(logs);
     }
 
+    /**
+     * DTO utilizado para inicializar un registro de auditoría.
+     */
     @Data
     @Schema(description = "Modelo de petición requerido para inicializar un registro de auditoría")
     public static class AuditCreateRequest {

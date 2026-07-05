@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad de dominio que representa y audita una liquidación o transacción en el sistema de pagos.
+ * Centraliza los datos del medio utilizado, importe, orden original y el código de confirmación del proveedor.
+ */
 @Schema(description = "Entidad representativa de la auditoría y estado físico del pago de una transacción")
 @Entity
 @Table(name = "payment_records")
@@ -56,6 +60,10 @@ public class PaymentRecord {
     @Column(name = "processed_at", updatable = false)
     private LocalDateTime processedAt;
 
+    /**
+     * Método invocado automáticamente antes de la persistencia de la entidad.
+     * Define la marca de tiempo de la transacción y asigna un estado PROCESSING por defecto en caso de ausencia.
+     */
     @PrePersist
     protected void onProcess() {
         this.processedAt = LocalDateTime.now();

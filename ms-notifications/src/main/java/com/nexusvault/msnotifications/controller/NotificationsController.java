@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para el manejo y auditoría de notificaciones en el sistema.
+ * Proporciona endpoints para solicitar envíos, consultar el estado de las notificaciones
+ * y confirmar su despacho.
+ */
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
@@ -26,6 +31,12 @@ public class NotificationsController {
 
     private final NotificationService notificationService;
 
+    /**
+     * Solicita el registro y encolamiento de una nueva notificación.
+     *
+     * @param requestDTO Objeto con la información requerida para el envío (destinatario, título, mensaje).
+     * @return ResponseEntity con la entidad de notificación creada en estado PENDING.
+     */
     @PostMapping("/send")
     @Operation(summary = "Solicitar el envío de una notificación", description = "Recibe los datos de un mensaje para un usuario externo y lo registra con estado inicial PENDING para su posterior despacho.")
     @ApiResponses(value = {
@@ -37,6 +48,11 @@ public class NotificationsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    /**
+     * Obtiene el historial completo de todas las notificaciones registradas.
+     *
+     * @return ResponseEntity con una lista que contiene todos los registros de notificaciones.
+     */
     @GetMapping("/logs")
     @Operation(summary = "Obtener el historial de todas las notificaciones", description = "Recupera la lista histórica de todos los registros de alertas emitidos por la plataforma.")
     @ApiResponses(value = {
@@ -46,6 +62,11 @@ public class NotificationsController {
         return ResponseEntity.ok(notificationService.getAllNotifications());
     }
 
+    /**
+     * Retorna una lista de notificaciones que actualmente se encuentran pendientes de envío (estado PENDING).
+     *
+     * @return ResponseEntity con las notificaciones no despachadas aún.
+     */
     @GetMapping("/pending")
     @Operation(summary = "Listar notificaciones pendientes de envío", description = "Filtra de forma exclusiva aquellas alertas que todavía no han sido procesadas o despachadas por los servidores de correo.")
     @ApiResponses(value = {
@@ -55,6 +76,12 @@ public class NotificationsController {
         return ResponseEntity.ok(notificationService.getNotificationsByStatus(NotificationStatus.PENDING));
     }
 
+    /**
+     * Confirma el despacho exitoso de una notificación marcándola como enviada (SENT).
+     *
+     * @param id Identificador de la notificación a confirmar.
+     * @return ResponseEntity con el registro de notificación modificado.
+     */
     @PatchMapping("/{id}/confirm")
     @Operation(summary = "Confirmar despacho de la notificación", description = "Modifica el estado de una notificación a 'SENT' y estampa la marca de tiempo exacta de salida.")
     @ApiResponses(value = {

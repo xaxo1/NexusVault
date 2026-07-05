@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST encargado de gestionar las operaciones sobre el catálogo de productos.
+ * Expone los endpoints para realizar el CRUD y filtros personalizados.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/products")
@@ -28,6 +32,11 @@ public class ProductController {
 
     private final ProductService productService;
 
+    /**
+     * Obtiene una lista de todos los productos del catálogo.
+     *
+     * @return una respuesta con la lista de productos y estado HTTP 200 (OK).
+     */
     @GetMapping
     @Operation(summary = "Obtener todos los productos", description = "Recupera una lista completa con todos los ítems almacenados en la base de datos.")
     @ApiResponses(value = {
@@ -38,6 +47,12 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
+    /**
+     * Obtiene los detalles de un producto utilizando su identificador único.
+     *
+     * @param id el identificador del producto.
+     * @return una respuesta con el producto si existe, o estado HTTP 404 (NOT FOUND).
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Obtener producto por ID", description = "Busca un producto específico utilizando su identificador único numérico.")
     @ApiResponses(value = {
@@ -51,6 +66,12 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Crea y registra un nuevo producto en el catálogo de la tienda.
+     *
+     * @param product los datos del producto a crear.
+     * @return una respuesta con el producto creado y estado HTTP 201 (CREATED).
+     */
     @PostMapping
     @Operation(summary = "Crear un nuevo producto", description = "Registra un producto en el catálogo verificando que las restricciones del esquema sean válidas.")
     @ApiResponses(value = {
@@ -63,6 +84,13 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
+    /**
+     * Actualiza la información de un producto existente.
+     *
+     * @param id el identificador del producto a actualizar.
+     * @param productData los nuevos datos del producto.
+     * @return una respuesta con el producto actualizado, o estado HTTP 404 (NOT FOUND) si no existe.
+     */
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto existente", description = "Modifica los campos de un producto basándose en su ID. Revalida las restricciones impuestas.")
     @ApiResponses(value = {
@@ -77,6 +105,12 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Elimina físicamente un producto del catálogo.
+     *
+     * @param id el identificador del producto a eliminar.
+     * @return una respuesta con estado HTTP 204 (NO CONTENT).
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto", description = "Remueve permanentemente un registro del catálogo de la tienda utilizando su ID.")
     @ApiResponses(value = {
@@ -89,6 +123,11 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Obtiene una lista de todos los productos que actualmente se encuentran en oferta.
+     *
+     * @return una respuesta con la lista de productos en oferta y estado HTTP 200 (OK).
+     */
     @GetMapping("/offers")
     @Operation(summary = "Obtener productos en oferta", description = "Filtra de manera automática todos los registros cuya propiedad de oferta (isOnSale) esté configurada en verdadero.")
     @ApiResponses(value = {
@@ -99,6 +138,12 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductsOnSale());
     }
 
+    /**
+     * Filtra los productos del catálogo en base a su nivel de rareza.
+     *
+     * @param rarity el nivel de rareza por el cual filtrar (ej. COMMON, LEGENDARY).
+     * @return una respuesta con la lista de productos filtrados y estado HTTP 200 (OK).
+     */
     @GetMapping("/rarity/{rarity}")
     @Operation(summary = "Filtrar productos por rareza", description = "Recupera los productos segmentados bajo un tag específico del enumerado de rarezas.")
     @ApiResponses(value = {

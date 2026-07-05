@@ -13,6 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controlador REST para gestionar la autenticación de usuarios.
+ * Proporciona endpoints para el inicio de sesión y validación de credenciales.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -30,6 +34,12 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "Autenticación exitosa, token generado correctamente"),
         @ApiResponse(responseCode = "401", description = "Credenciales inválidas o cuenta de usuario inactiva")
     })
+    /**
+     * Autentica un usuario en la plataforma.
+     *
+     * @param authRequest el DTO con las credenciales de acceso (email y contraseña).
+     * @return una respuesta con el token JWT si es exitosa, o estado HTTP 401 si falla.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDTO authRequest) {
         return authService.authenticateUser(authRequest)

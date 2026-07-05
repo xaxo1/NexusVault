@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST que expone las operaciones relacionadas con la gestión de perfiles de usuario.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
@@ -26,6 +29,11 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Recupera la lista completa de todos los perfiles de usuario registrados en el sistema.
+     *
+     * @return Una respuesta HTTP que contiene la lista de entidades {@link UserModel}.
+     */
     @GetMapping("/profiles")
     @Operation(summary = "Listar todos los perfiles", description = "Recupera una lista completa con todos los perfiles de usuario registrados en la base de datos de Nexus Vault.")
     @ApiResponses(value = {
@@ -36,6 +44,12 @@ public class UserController {
         return ResponseEntity.ok(userService.obtenerTodosLosPerfiles());
     }
 
+    /**
+     * Busca y retorna un perfil de usuario utilizando su identificador de autenticación de ms-auth.
+     *
+     * @param id El identificador único del usuario en el sistema de autenticación (authId).
+     * @return Una respuesta HTTP con el perfil del usuario, o 404 si no se encuentra.
+     */
     @GetMapping("/profiles/auth/{id}")
     @Operation(summary = "Buscar perfil por Auth ID", description = "Permite consultar un perfil de usuario utilizando el identificador único del microservicio remoto ms-auth.")
     @ApiResponses(value = {
@@ -49,6 +63,12 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Crea un nuevo perfil físico en la base de datos asociado a un usuario.
+     *
+     * @param userModel El objeto {@link UserModel} que contiene los datos del nuevo perfil a crear.
+     * @return Una respuesta HTTP con el perfil recién creado y un estado de CREATED (201).
+     */
     @PostMapping("/profiles")
     @Operation(summary = "Crear nuevo perfil de usuario", description = "Registra un nuevo perfil físico asociado a un usuario, inicializando su reputación en 0 por regla de negocio.")
     @ApiResponses(value = {
@@ -61,6 +81,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
+    /**
+     * Actualiza la información modificable de un perfil de usuario existente.
+     *
+     * @param id El identificador incremental del perfil que se va a actualizar.
+     * @param userModel El objeto con los nuevos datos a aplicar (ej. nickname, URL de avatar).
+     * @return Una respuesta HTTP con el perfil actualizado, o 404 si el perfil especificado no existe.
+     */
     @PutMapping("/profiles/{id}")
     @Operation(summary = "Actualizar perfil existente", description = "Modifica atributos editables como el nickname y la URL del avatar de un perfil basándose en su ID incremental.")
     @ApiResponses(value = {
@@ -75,6 +102,12 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Elimina permanentemente un perfil de usuario del sistema.
+     *
+     * @param id El identificador del perfil de usuario que se desea eliminar.
+     * @return Una respuesta HTTP 204 (No Content) indicando que la eliminación fue completada con éxito.
+     */
     @DeleteMapping("/profiles/{id}")
     @Operation(summary = "Eliminar un perfil de usuario", description = "Remueve físicamente el registro del perfil de la base de datos por medio de su identificador primario.")
     @ApiResponses(value = {

@@ -7,6 +7,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que representa de manera inmutable un registro consolidado del historial de auditoría analítica y financiera.
+ * Almacena información relacionada con reportes solicitados por usuarios.
+ */
 @Schema(description = "Entidad inmutable que representa un registro consolidado de auditoría analítica y financiera")
 @Entity
 @Table(name = "reports_history")

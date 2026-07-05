@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
 
+/**
+ * DTO que encapsula de forma validada la estructura necesaria para realizar abonos o cargos financieros en una cuenta.
+ */
 @Schema(description = "Objeto de transferencia para el procesamiento seguro de transacciones de depósito o pago")
 @Data
 public class TransactionRequestDTO {

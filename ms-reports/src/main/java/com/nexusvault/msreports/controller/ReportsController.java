@@ -15,6 +15,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ * Controlador REST que gestiona las operaciones relacionadas con los reportes analíticos y financieros.
+ * Proporciona endpoints para recuperar historiales, filtrar por tipos y desencadenar flujos asíncronos de generación de reportes.
+ */
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
@@ -24,6 +28,11 @@ public class ReportsController {
 
     private final ReportService reportService;
 
+    /**
+     * Obtiene el historial completo de todos los reportes almacenados en el sistema.
+     *
+     * @return Una respuesta HTTP con la lista completa de objetos {@link ModelReports}.
+     */
     @GetMapping("/history")
     @Operation(summary = "Obtener historial completo de reportes", description = "Recupera la lista histórica de todos los informes consolidados en el sistema.")
     @ApiResponses(value = {
@@ -33,6 +42,12 @@ public class ReportsController {
         return ResponseEntity.ok(reportService.obtenerTodosLosReportes());
     }
 
+    /**
+     * Filtra los reportes según un tipo específico de reporte.
+     *
+     * @param type El tipo de reporte a buscar, definido en el enumerador {@link ReportType}.
+     * @return Una respuesta HTTP con la lista de reportes que coinciden con el tipo solicitado.
+     */
     @GetMapping("/search")
     @Operation(summary = "Filtrar reportes por tipo", description = "Busca informes almacenados agrupados por su tipología específica (ej. VENTAS_MENSUALES).")
     @ApiResponses(value = {
@@ -43,6 +58,12 @@ public class ReportsController {
         return ResponseEntity.ok(reportService.obtenerReportesPorTipo(type));
     }
 
+    /**
+     * Genera y guarda de manera asíncrona un nuevo reporte financiero para el usuario que lo solicita.
+     *
+     * @param userId El identificador único del usuario (analista) que solicita el reporte.
+     * @return Un objeto {@link Mono} que encapsula la respuesta HTTP con el nuevo reporte creado, o bad request si ocurre un error.
+     */
     @PostMapping("/generate")
     @Operation(summary = "Generar reporte financiero de forma asíncrona", description = "Dispara el flujo reactivo de recolección de información. Consulta el perfil en ms-users, el listado de compras en ms-orders, calcula los ingresos netos y archiva el resultado.")
     @ApiResponses(value = {

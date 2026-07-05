@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que representa el registro principal de una acción de auditoría.
+ * Almacena información sobre quién, qué y cuándo realizó una modificación.
+ */
 @Schema(description = "Esquema maestro que centraliza la cabecera de una acción de auditoría")
 @Entity
 @Table(name = "audit_logs")

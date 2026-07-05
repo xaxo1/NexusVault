@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Representa la entidad de un producto o ítem en el catálogo.
+ * Contiene información sobre su nombre, precio, rareza y estado de oferta.
+ */
 @Schema(description = "Entidad representativa de un ítem o producto comercializable dentro del catálogo de la plataforma")
 @Entity
 @Table(name = "products")

@@ -7,6 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
 
+/**
+ * Objeto de transferencia de datos con la información necesaria para liquidar el pago de una orden.
+ * Contiene el método de pago seleccionado, el monto a abonar y la orden a la que corresponde.
+ */
 @Schema(description = "Payload necesario para procesar una transacción de pago contra una orden del sistema")
 @Data
 public class PaymentRequestDTO {

@@ -13,6 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementación de las reglas de negocio del servicio de pagos.
+ * Controla la simulación de cobro mediante pasarelas externas, previniendo duplicados 
+ * y gestionando de forma atómica los cambios transaccionales.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -20,6 +25,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRecordRepository paymentRepository;
 
+    /**
+     * Procesa la solicitud de cobro simulando la integración con una pasarela bancaria.
+     * Evita la duplicación de pagos verificando la orden con anterioridad.
+     *
+     * @param request Información requerida para cobrar (ID de orden, método de pago, monto).
+     * @return El registro de pago persistido, idealmente con estado SUCCESS.
+     * @throws IllegalStateException si la orden ya ha sido pagada previamente.
+     */
     @Override
     @Transactional
     public PaymentRecord processPayment(PaymentRequestDTO request) {
@@ -54,6 +67,13 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.save(record);
     }
 
+    /**
+     * Busca la transacción de pago subyacente para el ID de una orden específica.
+     *
+     * @param orderId El identificador de la orden.
+     * @return El registro de auditoría de pago.
+     * @throws IllegalArgumentException si la orden carece de pago en el sistema.
+     */
     @Override
     @Transactional(readOnly = true)
     public PaymentRecord getPaymentByOrderId(Long orderId) {
@@ -61,6 +81,12 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró ningún registro de pago para la orden ID: " + orderId));
     }
 
+    /**
+     * Recupera una lista agrupando todos los pagos por estado específico.
+     *
+     * @param status El estado de interés (ej. SUCCESS, FAILED).
+     * @return Una colección de registros de pago coincidentes.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<PaymentRecord> getPaymentsByStatus(PaymentStatus status) {
@@ -68,6 +94,14 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findByStatus(status);
     }
 
+    /**
+     * Ejecuta de forma lógica un reembolso o contracargo, actualizando el estado de la operación.
+     * Solo permite ejecutar el flujo si el estado actual es SUCCESS.
+     *
+     * @param orderId Identificador de la orden a devolver.
+     * @return El registro de pago actualizado al estado REFUNDED.
+     * @throws IllegalStateException si el pago no es exitoso y no puede ser reembolsado.
+     */
     @Override
     @Transactional
     public PaymentRecord refundPayment(Long orderId) {

@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Objeto de transferencia de datos utilizado para la solicitud de envío de una notificación.
+ * Contiene la información necesaria sobre el destinatario y el contenido del mensaje.
+ */
 @Schema(description = "Estructura de payload requerida por los microservicios para solicitar la emisión de una alerta")
 @Data
 public class NotificationRequestDTO {
