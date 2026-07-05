@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para administrar y procesar los pagos de la plataforma.
+ * Ofrece puntos de acceso para liquidar órdenes, consultar transacciones y emitir devoluciones.
+ */
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
@@ -26,6 +30,12 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    /**
+     * Procesa y registra la liquidación monetaria de una orden específica.
+     *
+     * @param requestDTO Datos del pago, incluyendo monto, método de pago e ID de la orden.
+     * @return ResponseEntity con la entidad transaccional del pago creada.
+     */
     @PostMapping("/process")
     @Operation(summary = "Procesar pago de una orden", description = "Recibe los datos de facturación de una orden, efectúa la llamada simulada a la pasarela bancaria externa y guarda el registro transaccional.")
     @ApiResponses(value = {
@@ -38,6 +48,12 @@ public class PaymentController {
         return new ResponseEntity<>(processedRecord, HttpStatus.CREATED);
     }
 
+    /**
+     * Busca los detalles de pago a través del identificador asociado a su orden.
+     *
+     * @param orderId Identificador único de la orden original.
+     * @return ResponseEntity con los detalles del pago de la orden.
+     */
     @GetMapping("/order/{orderId}")
     @Operation(summary = "Buscar pago por ID de Orden", description = "Recupera la auditoría de pago asociada de forma unívoca a una orden de compra.")
     @ApiResponses(value = {
@@ -48,6 +64,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentByOrderId(orderId));
     }
 
+    /**
+     * Filtra los registros de pago según su estado transaccional.
+     *
+     * @param status El estado por el cual se desea buscar.
+     * @return ResponseEntity con la lista de pagos del estado indicado.
+     */
     @GetMapping("/status/{status}")
     @Operation(summary = "Filtrar transacciones por estado", description = "Permite a los administradores listar todos los pagos agrupados según su condición transaccional (SUCCESS, FAILED, REFUNDED).")
     @ApiResponses(value = {
@@ -57,6 +79,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentsByStatus(status));
     }
 
+    /**
+     * Efectúa el reembolso y cambio de estado a una orden previamente pagada con éxito.
+     *
+     * @param orderId Identificador de la orden a la que se le ejecutará el reembolso.
+     * @return ResponseEntity con el registro del pago devuelto.
+     */
     @PutMapping("/refund/{orderId}")
     @Operation(summary = "Ejecutar el reembolso de un pago", description = "Modifica el estado de un pago exitoso a 'REFUNDED' para revertir el flujo de fondos asociado a la orden.")
     @ApiResponses(value = {

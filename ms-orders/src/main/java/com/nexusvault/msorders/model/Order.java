@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad de dominio que representa una orden de compra transaccional generada por un usuario.
+ * Centraliza el historial, importe y estado de la operación.
+ */
 @Schema(description = "Entidad principal que representa una cabecera de orden transaccional")
 @Entity
 @Table(name = "orders")
@@ -44,6 +48,10 @@ public class Order {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    /**
+     * Metodo invocado antes de persistir la entidad. 
+     * Asigna automáticamente la fecha de creación y el estado pendiente por defecto.
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -52,6 +60,12 @@ public class Order {
         }
     }
     
+    /**
+     * Añade un nuevo ítem a la lista de esta orden.
+     * Mantiene la consistencia bidireccional estableciendo la orden en el ítem provisto.
+     *
+     * @param item El ítem a agregar a la orden.
+     */
     public void addOrderItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);

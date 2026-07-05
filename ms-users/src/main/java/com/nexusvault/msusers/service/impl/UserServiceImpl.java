@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementación de {@link UserService} que gestiona la lógica de negocio, validaciones y persistencia de los perfiles de usuario.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

@@ -6,6 +6,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Representa la entidad del modelo de Autenticación.
+ * Almacena la información de seguridad, credenciales y roles de los usuarios en el sistema.
+ */
 @Schema(description = "Entidad de base de datos que almacena las credenciales y estados de autenticación")
 @Entity
 @Table(name = "auth_users")

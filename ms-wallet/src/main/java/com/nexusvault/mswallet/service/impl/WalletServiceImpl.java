@@ -12,6 +12,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+/**
+ * Implementación central de {@link WalletService} que materializa la capa de servicio para billeteras.
+ * Emplea gestión transaccional y se apoya en WebClient para emitir alertas asíncronas con fallbacks de resiliencia.
+ */
 @Service
 public class WalletServiceImpl implements WalletService {
 

@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Entidad que representa una línea de detalle dentro de una orden de compra.
+ * Guarda la relación entre el producto, la cantidad y el precio congelado en el momento.
+ */
 @Schema(description = "Detalle del ítem individual que compone el desglose de una orden")
 @Entity
 @Table(name = "order_items")

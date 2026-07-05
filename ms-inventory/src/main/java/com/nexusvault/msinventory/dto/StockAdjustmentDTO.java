@@ -5,6 +5,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Objeto de transferencia de datos utilizado para reportar cambios (incrementos o decrementos)
+ * en el inventario físico de los productos.
+ */
 @Schema(description = "Estructura de datos para reportar incrementos o decrementos en el stock físico")
 @Data
 public class StockAdjustmentDTO {

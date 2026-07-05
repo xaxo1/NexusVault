@@ -9,6 +9,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Servicio orquestador diseñado para coordinar operaciones distribuidas entre múltiples microservicios.
+ * Administra el flujo de validación, consultando disponibilidad de productos y el saldo de la billetera.
+ */
 @Service
 public class OrderOrchestratorService {
 

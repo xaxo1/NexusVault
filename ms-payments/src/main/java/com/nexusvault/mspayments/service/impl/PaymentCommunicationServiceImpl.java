@@ -8,6 +8,10 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 
+/**
+ * Servicio de implementación diseñado para comunicarse de manera asíncrona con el microservicio de Billeteras (ms-wallet).
+ * Emplea WebClient y programación reactiva para emitir llamadas sin bloquear la ejecución.
+ */
 @Service
 public class PaymentCommunicationServiceImpl implements PaymentCommunicationService {
 

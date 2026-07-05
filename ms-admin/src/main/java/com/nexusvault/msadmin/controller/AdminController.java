@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con los administradores.
+ * Proporciona endpoints para crear, leer, actualizar y desactivar/eliminar administradores.
+ */
 @RestController
 @RequestMapping("/api/v1/admins")
 @RequiredArgsConstructor
@@ -31,6 +35,12 @@ public class AdminController {
         @ApiResponse(responseCode = "201", description = "Administrador creado exitosamente"),
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos o formato incorrecto")
     })
+    /**
+     * Crea un nuevo administrador en el sistema.
+     *
+     * @param admin los datos del administrador a crear.
+     * @return una respuesta con el administrador creado y el estado HTTP 201 (CREATED).
+     */
     @PostMapping
     public ResponseEntity<Admin> createAdmin(@Valid @RequestBody Admin admin) {
         Admin newAdmin = adminService.createAdmin(admin);
@@ -44,6 +54,11 @@ public class AdminController {
         // 6.1  Response
         @ApiResponse(responseCode = "200", description = "Lista de administradores activos recuperada")
     })
+    /**
+     * Obtiene una lista de todos los administradores activos en el sistema.
+     *
+     * @return una respuesta con la lista de administradores activos y el estado HTTP 200 (OK).
+     */
     @GetMapping("/active")
     public ResponseEntity<List<Admin>> getActiveAdmins() {
         List<Admin> admins = adminService.getActiveAdmins();
@@ -55,6 +70,12 @@ public class AdminController {
         @ApiResponse(responseCode = "200", description = "Administrador encontrado"),
         @ApiResponse(responseCode = "404", description = "No se encontró ningún administrador con el email provisto")
     })
+    /**
+     * Obtiene un administrador específico a partir de su correo electrónico.
+     *
+     * @param email el correo electrónico del administrador a buscar.
+     * @return una respuesta con el administrador encontrado o estado HTTP 404 (NOT FOUND) si no existe.
+     */
     @GetMapping("/email/{email}")
     public ResponseEntity<Admin> getAdminByEmail(@PathVariable String email) {
         return adminService.getAdminByEmail(email)
@@ -67,6 +88,12 @@ public class AdminController {
         @ApiResponse(responseCode = "200", description = "Administrador deactivated correctamente"),
         @ApiResponse(responseCode = "404", description = "Administrador no encontrado")
     })
+    /**
+     * Desactiva un administrador (baja lógica) mediante su ID.
+     *
+     * @param id el identificador del administrador a desactivar.
+     * @return una respuesta con el administrador actualizado o estado HTTP 404 (NOT FOUND) si no existe.
+     */
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Admin> deactivateAdmin(@PathVariable Long id) {
         try {
@@ -83,6 +110,13 @@ public class AdminController {
         @ApiResponse(responseCode = "400", description = "Validación fallida en los datos del body"),
         @ApiResponse(responseCode = "404", description = "Administrador no encontrado")
     })
+    /**
+     * Actualiza los datos de un administrador existente.
+     *
+     * @param id el identificador del administrador a actualizar.
+     * @param adminDetails los nuevos datos del administrador.
+     * @return una respuesta con el administrador actualizado y el estado HTTP 200 (OK).
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @Valid @RequestBody Admin adminDetails) {
         Admin updatedAdmin = adminService.updateAdmin(id, adminDetails);
@@ -94,6 +128,12 @@ public class AdminController {
         @ApiResponse(responseCode = "204", description = "Administrador eliminado correctamente, sin contenido de retorno"),
         @ApiResponse(responseCode = "404", description = "Administrador no encontrado para eliminación")
     })
+    /**
+     * Elimina físicamente un administrador de la base de datos.
+     *
+     * @param id el identificador del administrador a eliminar.
+     * @return una respuesta con estado HTTP 204 (NO CONTENT).
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
         adminService.deleteAdmin(id);

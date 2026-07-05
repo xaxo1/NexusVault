@@ -7,6 +7,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que modela y almacena la información crítica de la billetera digital de un jugador,
+ * manejando su capital económico actual con seguridad transaccional en base de datos.
+ */
 @Schema(description = "Entidad que representa la billetera digital y balance monetario de precisión de un usuario")
 @Entity
 @Table(name = "wallets")

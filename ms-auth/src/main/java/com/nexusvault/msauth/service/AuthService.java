@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Servicio encargado de la lógica de negocio de la autenticación.
+ * Gestiona el registro de usuarios, validación de credenciales y generación de tokens.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -19,6 +23,13 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder; // Inyectado para hashing seguro
 
+    /**
+     * Registra de manera segura a un nuevo usuario en el sistema.
+     * Se encarga de encriptar la contraseña antes de persistirla.
+     *
+     * @param user la entidad del usuario a registrar.
+     * @return el modelo de usuario persistido.
+     */
     public AuthModel saveUser(AuthModel user) {
         log.info("Registrando nuevo usuario en el sistema de autenticación: {}", user.getEmail());
         // Encriptar la contraseña antes de guardarla en la base de datos
@@ -26,10 +37,22 @@ public class AuthService {
         return authRepository.save(user);
     }
 
+    /**
+     * Busca un usuario por su identificador.
+     *
+     * @param id el identificador único del usuario.
+     * @return un {@link Optional} con el usuario encontrado o vacío.
+     */
     public Optional<AuthModel> findUserById(Long id) {
         return authRepository.findById(id);
     }
 
+    /**
+     * Autentica un usuario verificando sus credenciales y estado activo.
+     *
+     * @param request el objeto con el email y contraseña del usuario.
+     * @return un {@link Optional} con el DTO de respuesta (incluye token JWT) si el login es exitoso.
+     */
     public Optional<AuthResponseDTO> authenticateUser(AuthRequestDTO request) {
         Optional<AuthModel> userOpt = authRepository.findByEmail(request.getEmail());
 

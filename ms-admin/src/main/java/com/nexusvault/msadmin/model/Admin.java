@@ -9,6 +9,10 @@ import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Representa la entidad de un Administrador en el sistema.
+ * Almacena los datos personales, credenciales y estado del administrador.
+ */
 @Schema(description = "Entidad estructural que representa a un usuario con privilegios de Administrador")
 @Entity
 @Table(name = "admins")

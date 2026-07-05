@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controlador REST encargado de exponer los endpoints de gestión de las billeteras (wallets) de los usuarios.
+ */
 @RestController
 @RequestMapping("/api/wallet")
 @RequiredArgsConstructor
@@ -22,6 +25,12 @@ public class WalletController {
 
     private final WalletService walletService;
 
+    /**
+     * Obtiene el saldo actual y el estado completo de la billetera de un usuario determinado.
+     *
+     * @param userId El identificador del usuario propietario de la billetera.
+     * @return Una respuesta HTTP con los datos de la billetera, o código 404 si no existe.
+     */
     @GetMapping("/user/{userId}")
     @Operation(summary = "Consultar estado y saldo actual", description = "Recupera la información completa de la billetera del jugador, útil para el Navbar del cliente web.")
     @ApiResponses(value = {
@@ -35,6 +44,12 @@ public class WalletController {
                         .body("No se encontró una billetera para el usuario ID: " + userId));
     }
 
+    /**
+     * Procesa de manera segura un depósito de fondos en la billetera de un usuario.
+     *
+     * @param transactionRequest Objeto DTO que contiene el ID de usuario y el monto monetario a depositar.
+     * @return Una respuesta HTTP confirmando el éxito de la transacción, o 400 si hubo un error o monto inválido.
+     */
     @PostMapping("/deposit")
     @Operation(summary = "Depositar fondos en la cuenta", description = "Simula e incrementa los fondos del balance actual de un jugador tras realizar una recarga monetaria exitosa.")
     @ApiResponses(value = {
@@ -51,6 +66,12 @@ public class WalletController {
         }
     }
 
+    /**
+     * Realiza un cobro o deducción de fondos en la billetera de un usuario, requerido habitualmente por otros microservicios.
+     *
+     * @param transactionRequest Objeto DTO que especifica el ID del usuario y el costo a deducir de su saldo.
+     * @return Una respuesta HTTP confirmando la deducción, o 402 si el balance actual es insuficiente.
+     */
     @PostMapping("/pay")
     @Operation(summary = "Procesar pago por compra de skin", description = "Realiza la deducción del saldo de un jugador para aprobar una transacción distribuida iniciada por ms-orders.")
     @ApiResponses(value = {

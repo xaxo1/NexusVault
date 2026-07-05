@@ -10,13 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Esta clase centraliza el manejo de errores de todo el microservicio.
- * Evita tener que usar try/catch en cada método del Controller.
- * ¡Esto cumple directo con la rúbrica!
+ * Clase que centraliza el manejo de excepciones de todo el microservicio.
+ * Evita tener que usar bloques try/catch en cada método de los controladores.
+ * Se encarga de capturar errores y retornar respuestas HTTP formateadas.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Maneja las excepciones generadas por fallas en la validación de argumentos (@Valid).
+     *
+     * @param ex la excepción lanzada cuando los datos no cumplen con las restricciones.
+     * @return un mapa con los errores por campo y el estado HTTP 400 (BAD REQUEST).
+     */
     // Maneja los errores de validación (@Valid) como cuando falta un campo obligatorio
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -27,6 +33,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
     }
 
+    /**
+     * Maneja excepciones generales no controladas para evitar caídas en la aplicación.
+     *
+     * @param ex la excepción general capturada.
+     * @return un mapa con un mensaje de error y el estado HTTP 500 (INTERNAL SERVER ERROR).
+     */
     // Maneja cualquier otro error inesperado para que no se caiga la app
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {

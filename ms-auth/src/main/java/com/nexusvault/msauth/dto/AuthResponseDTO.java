@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * Objeto de Transferencia de Datos (DTO) que representa la respuesta a una autenticación exitosa.
+ * Contiene el token JWT generado, el email y el rol del usuario autenticado.
+ */
 @Schema(description = "Respuesta devuelta tras una autenticación exitosa")
 @Data
 @AllArgsConstructor

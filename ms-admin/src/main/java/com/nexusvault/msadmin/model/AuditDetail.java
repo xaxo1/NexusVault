@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que representa el detalle de un registro de auditoría.
+ * Registra los cambios específicos de los atributos (valor anterior y nuevo valor).
+ */
 @Schema(description = "Detalle atómico que registra los cambios sufridos en un campo particular")
 @Entity
 @Table(name = "audit_details")

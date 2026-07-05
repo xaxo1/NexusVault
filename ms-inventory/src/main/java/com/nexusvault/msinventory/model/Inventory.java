@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que representa el estado del inventario para un producto específico.
+ * Gestiona el balance de unidades físicas almacenadas en el sistema.
+ */
 @Schema(description = "Entidad que representa el control físico y el balance de unidades almacenadas por cada producto")
 @Entity
 @Table(name = "inventory")
@@ -40,6 +44,10 @@ public class Inventory {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
+    /**
+     * Método invocado automáticamente antes de persistir o actualizar la entidad.
+     * Actualiza la marca de tiempo de la última modificación.
+     */
     @PrePersist
     @PreUpdate
     protected void onUpdate() {

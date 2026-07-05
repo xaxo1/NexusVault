@@ -8,6 +8,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 //-------1-acá comienza con el schema general del modelo
+/**
+ * Entidad que representa el perfil de un usuario en el sistema.
+ * Guarda la configuración pública, estadísticas de reputación y el estado general de la cuenta.
+ */
 @Schema(description = "Entidad representativa del perfil público y estadísticas comunitarias de un jugador")
 @Entity
 @Table(name = "user_profiles")
